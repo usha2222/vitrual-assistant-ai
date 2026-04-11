@@ -7,10 +7,10 @@ export const register = async (req, res) => {
 const {name,email,password}=req.body;
 const existingEmail= await User.findOne({email});
 if(existingEmail){
-    return res.status(400).json({message:"Email already exists  !"});
+    return res.status(400).json({success: false, message:"Email already exists  !"});
 }
 if(password.length<6){
-    return res.status(400).json({message:"Password must be at least 6 characters long !"});
+    return res.status(400).json({success: false, message:"Password must be at least 6 characters long !"});
 }  
 const hashedPassword=await bcrypt.hash(password,10);
 
@@ -25,11 +25,11 @@ const user=await User.create({
         sameSite: 'strict',
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
-return res.status(201).json({message:"User registered successfully",user, token});
+return res.status(201).json({success: true, message:"User registered successfully",user, token});
     }
     catch(e){
         console.error('Error during registration:', e);
-        res.status(500).json({message:"Server error" ,error: e.message});
+        res.status(500).json({success: false, message:"Server error" ,error: e.message});
     }
     
 }
@@ -38,11 +38,11 @@ export const login = async (req, res) => {
 const {email,password}=req.body;
 const existingEmail= await User.findOne({email});
 if(!existingEmail){
-    return res.status(400).json({message:"Email does not exist  !"});
+    return res.status(400).json({success: false, message:"Email does not exist  !"});
 }
 const isMatch=await bcrypt.compare(password, existingEmail.password);
 if(!isMatch){
-    return res.status(400).json({message:"Invalid password!"});
+    return res.status(400).json({success: false, message:"Invalid password!"});
 }
 const token=await getToken(existingEmail._id);
 res.cookie('token', token, {
@@ -51,11 +51,11 @@ res.cookie('token', token, {
     sameSite: 'strict',
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
-return res.status(200).json({message:"Login successful", user: existingEmail, token});
+return res.status(200).json({success: true, message:"Login successful", user: existingEmail, token});
     }
     catch(e){
         console.error('Error during login:', e);
-        res.status(500).json({message:"Server error" ,error: e.message});
+        res.status(500).json({success: false, message:"Server error" ,error: e.message});
     }
     
 }
@@ -63,11 +63,11 @@ return res.status(200).json({message:"Login successful", user: existingEmail, to
 export const logout = (req, res) => {
     try{
     res.clearCookie('token');
-   return  res.status(200).json({message:"Logout successful"});
+   return  res.status(200).json({success: true, message:"Logout successful"});
     }
       catch(e){
         console.error('Error during logout:', e);
-        res.status(500).json({message:"Server error" ,error: e.message});
+        res.status(500).json({success: false, message:"Server error" ,error: e.message});
     }
 }                               
 
