@@ -4,6 +4,7 @@ import connectdb from './config/db.js';
 import userRouter from './routes/userroute.js';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import authRouter from './routes/authuser.route.js';
 dotenv.config();
     connectdb();
 
@@ -23,9 +24,10 @@ const PORT =  5000;
     res.send("heloo  to major project ai  ")
   })
 app.use('/api/auth',userRouter);
+app.use('/api/user',authRouter);   // This route is for authenticated user data retrieval api/user/current
 
 
 
 app.listen(PORT, ()=>{
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on port http://localhost:${PORT}`);
 });
