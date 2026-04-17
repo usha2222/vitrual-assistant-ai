@@ -13,11 +13,11 @@ const userSchema=new mongoose.Schema({
         type:String,
         required:true
     },
-    assistantsName:{
+    assistantName:{
         type:String,
-        default:"My Assistant"
+        default:""
     },
-    assistantsImage:{
+    assistantImage:{
         type:String,
     },
     history:[

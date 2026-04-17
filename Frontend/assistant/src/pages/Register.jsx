@@ -1,4 +1,4 @@
-import backgroundImage from '../assets/background.jpeg'
+import backgroundImage from '../assets/bg.jpeg'
 import { IoEye } from "react-icons/io5";
 import { IoEyeOff } from 'react-icons/io5';
 import { useState } from 'react';
@@ -15,7 +15,7 @@ const Register = () => {
     const [error,setError]=useState('');
     const [loading,setLoading]=useState(false);
     const navigate = useNavigate()
-    const { serverUrl } = useContext(userDataContext);
+    const { serverUrl ,userData,setUserData} = useContext(userDataContext);
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
@@ -26,7 +26,9 @@ const Register = () => {
             }, { withCredentials: true }
             );
             console.log(result.data);
+            setUserData(result.data);
             setLoading(false);
+            // navigate("/login")
             if (result.data.success) {
                 alert("Registration Successful");
                 navigate('/login');
@@ -34,13 +36,14 @@ const Register = () => {
         }
         catch (err) {
             console.error(err.response?.data?.message || "Registration failed. Please try again.");
+            setUserData(null);
             setLoading(false);
             setError(err.response?.data?.message || "Registration failed. Please try again.");
         }
     }
     return (
-        <div className='w-full h-[100vh] bg-cover flex justify-center items-center' style={{ backgroundImage: `url(${backgroundImage})` }}>
-            <form onSubmit={handleSubmit} className=' p-10 w-[80%] max-w-[430px] h-[520px] bg-[#4f3e3e69] backdrop-blur-md shadow-lg m-3 shadow-blue flex flex-col items-center  gap-6 rounded-3xl'>
+       <div className='w-full h-[100vh] bg-cover flex justify-center items-center' style={{ backgroundImage: `url(${backgroundImage})` }}>
+            <form onSubmit={handleSubmit} className=' p-10 w-[80%] max-w-[430px] h-[520px] bg-[#4b529569]  backdrop-blur-md shadow-lg m-3 shadow-blue flex flex-col items-center  gap-6 rounded-3xl'>
                 <h1 className='text-white text-[25px] mb-6 font-semibold'>Register to <span className='text-blue-400'>Virtual Assistant</span></h1>
                 {/* Enter your name */}
                 <input className=' w-full h-[50px] outline-none border border-gray-200 bg-transparent text-white placeholder:gray-300 px-[20px] py-[5px] rounded-full' type="text" placeholder='Enter your  Name ......' value={name} onChange={(e) => setName(e.target.value)} required />

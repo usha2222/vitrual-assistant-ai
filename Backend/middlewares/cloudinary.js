@@ -14,8 +14,9 @@ return uploadResult.secure_url;
     }
 
 catch(err){
-    fs.unlinkSync(filePath);
-return res.status(500).json({ success:false,message:"Cloudinary upload failed" })
+    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    console.error("Cloudinary Upload Error:", err);
+    throw err;
 }
 }
 export default uploadToCloudinary;

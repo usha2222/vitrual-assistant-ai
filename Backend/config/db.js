@@ -1,6 +1,5 @@
 import mongoose from "mongoose"
 const connectdb=async ()=>{
-
     try{
         // const conn1=await mongoose.connect(process.env.MONGO_URL)
        const conn=await mongoose.connect(process.env.LOCAL_URL)
