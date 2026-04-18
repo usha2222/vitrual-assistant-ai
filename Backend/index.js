@@ -5,6 +5,7 @@ import userRouter from './routes/userroute.js';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import authRouter from './routes/authuser.route.js';
+import geminiResponse from './gemini.js'
 dotenv.config();
     connectdb();
 
@@ -25,7 +26,6 @@ const PORT =  5000;
   })
 app.use('/api/auth',userRouter);
 app.use('/api/user',authRouter);   // This route is for authenticated user data retrieval api/user/current
-
 
 
 app.listen(PORT, ()=>{

@@ -51,6 +51,7 @@ const Customize = () => {
 
 
 
+
             </div>
             {seletectedImage && (
                 <button type="submit" onClick={() => navigate("/customizename")} className=' w-50 cursor-pointer flex justify-center align-center items-center mx-auto my-8  h-[50px] text-black bg-white font-semibold  rounded-full text-[19px] outline-none border font-bold border-gray-200 bg-transparent' >Next</button>
