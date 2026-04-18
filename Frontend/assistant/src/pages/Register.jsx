@@ -26,19 +26,20 @@ const Register = () => {
             }, { withCredentials: true }
             );
             console.log(result.data);
-            setUserData(result.data);
-            setLoading(false);
-            // navigate("/login")
+            // Do NOT set userData here. The user should log in after registration.
+            // setUserData(result.data);
             if (result.data.success) {
                 alert("Registration Successful");
                 navigate('/login');
             }
         }
         catch (err) {
-            console.error(err.response?.data?.message || "Registration failed. Please try again.");
-            setUserData(null);
-            setLoading(false);
+            console.error("Registration Error:", err.response?.data?.message || "Registration failed. Please try again.");
+            // setUserData(null); // No need to set to null if it was never set to begin with
             setError(err.response?.data?.message || "Registration failed. Please try again.");
+        }
+        finally {
+            setLoading(false);
         }
     }
     return (

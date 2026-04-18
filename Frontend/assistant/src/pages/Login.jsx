@@ -40,8 +40,10 @@ navigate("/");
             alert('Login failed. Please check your credentials and try again.');
             console.error("Login Error:", err);
             setUserData(null);
-            setLoading(false);
             setError(err.response?.data?.message || "Login failed. Please try again."); 
+        }
+        finally {
+            setLoading(false);
         }
     }
 

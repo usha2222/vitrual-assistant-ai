@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react'
 import { userDataContext } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { MdKeyboardBackspace } from 'react-icons/md';
 
 
 const Customize2 = () => {
@@ -34,9 +35,12 @@ const handleAssistantCreation =async (e) => {
     }
 }
   return (
-        <div className='w-full flex justify-center flex-col min-h-screen bg-gradient-to-t from-[#383737] py-8 to-[#0b08cb] '>
-
-            <h1 className='text-white text-[25px] mb-6 font-semibold text-center pt-5'>Enter Your <span className='text-blue-500'>Virtual Assistant Name</span></h1>
+        <div className='w-full flex flex-col min-h-screen bg-gradient-to-t from-[#383737] py-8 to-[#0b08cb] '>
+            <button onClick={() => navigate('/customize')} className='absolute top-[30px] left-[30px]  text-white w-[40px] h-[40px]   cursor-pointer rounded-full  shadow    items-center flex justify-center shadow-gray-400 font-bold  '>
+                <MdKeyboardBackspace size={20} />
+                
+            </button>
+            <h1 className='text-white mt-8 text-[25px] mb-6 font-semibold text-center pt-20'>Enter Your <span className='text-blue-500'>Virtual Assistant Name</span></h1>
 
              <input className=' w-92 flex justify-center mx-auto h-[50px] outline-none border border-gray-200 bg-transparent text-white placeholder:gray-300 px-[20px] py-[5px] rounded-full' type="text" placeholder='Enter your Assistant Name eg. Alex,Shiri,Nexa......' value={assistantName} onChange={(e) => setAssistantName(e.target.value)} required />
   {assistantName && (

@@ -7,6 +7,7 @@ import Home from './pages/Home'
 import { useContext } from 'react'
 import { userDataContext } from './context/UserContext'
 import Customize2 from './pages/Customize2'
+import PageNotFound from './pages/PageNotFound'
 const App = () => {
   const {userData,setUserData}=useContext(userDataContext);
     return (
@@ -16,11 +17,12 @@ const App = () => {
         (userData.user?.assistantImage && userData.user?.assistantName ? <Home /> : <Navigate to="/customize" />)
       } />
       
-      <Route path='/customize' element={ userData ? <Customize/> : <Navigate to='/login' /> } />
+      <Route path='/customize' element={ userData ? <Customize/> : <Navigate to='/register' /> } />
           
-      <Route path='/customizename' element={ userData ? <Customize2/> : <Navigate to='/login' /> } />
-      <Route path='/login' element={ !userData ? <Login /> : <Navigate to='/' /> } />
+      <Route path='/customizename' element={ userData ? <Customize2/> : <Navigate to='/register' /> } />
+      <Route path='/login' element={ !userData ? <Login /> : <Navigate to='/customize' /> } />
       <Route path='/register' element={ !userData ? <Register /> : <Navigate to='/' /> } />
+      <Route path='*' element={<PageNotFound />} />
     </Routes>
   )
 }
