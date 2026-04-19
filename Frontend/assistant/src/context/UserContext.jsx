@@ -2,7 +2,8 @@ import axios from 'axios';
 import{ createContext, useEffect, useState } from 'react'
 export const userDataContext = createContext();
 const UserContext = ({ children }) => {
-  const serverUrl = 'http://localhost:5000';
+  // const serverUrl='http://localhost:5000';
+  const serverUrl = 'https://vitrual-assistant-ai.onrender.com';
   const [userData, setUserData] = useState(null);
   const [frontEndImage, setFrontEndImage] =useState(null);
   const [seletectedImage, setSelectedImage] = useState(null);
