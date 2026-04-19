@@ -5,7 +5,6 @@ import userRouter from './routes/userroute.js';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import authRouter from './routes/authuser.route.js';
-import geminiResponse from './gemini.js'
 dotenv.config();
     connectdb();
 
@@ -22,10 +21,10 @@ app.use(cookieParser());
 
 const PORT =  5000;
  app.get("/" ,(req,res)=>{
-    res.send("heloo  to major project ai  ")
+    res.send("Hello to Major Project AI Backend");
   })
-app.use('/api/auth',userRouter);
-app.use('/api/user',authRouter);   // This route is for authenticated user data retrieval api/user/current
+app.use('/api/auth', authRouter);
+app.use('/api/user', userRouter); 
 
 
 app.listen(PORT, ()=>{
