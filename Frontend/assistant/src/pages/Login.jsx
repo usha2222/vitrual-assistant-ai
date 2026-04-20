@@ -24,7 +24,7 @@ const Login = () => {
         setError('');
         setLoading(true);
         try {
-            const response = await axios.post(`${serverUrl}/api/auth/login`, {
+            const response = await axios.post(`${serverUrl}/auth/login`, {
                 email, password
             }, { withCredentials: true });
             console.log(response.data);

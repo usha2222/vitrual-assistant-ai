@@ -3,19 +3,19 @@ import{ createContext, useEffect, useState } from 'react'
 export const userDataContext = createContext();
 const UserContext = ({ children }) => {
   // const serverUrl='http://localhost:5000';
-  const serverUrl = 'https://vitrual-assistant-ai.onrender.com';
+  const serverUrl = 'https://clg-ai-assistant.onrender.com/api';
   const [userData, setUserData] = useState(null);
   const [frontEndImage, setFrontEndImage] =useState(null);
   const [seletectedImage, setSelectedImage] = useState(null);
       const [backEndImage, setBackEndImage] = useState(null);
   const handleCurrentUser =async () => {
     try {
-      const result = await axios.get(`${serverUrl}/api/user/current`, { withCredentials: true });
-      setUserData(result.data);
+      const result = await axios.get(`${serverUrl}/user/current`, { withCredentials: true });
+      setUserData(result.data.user ? result.data : null);
       // console.log("Current User Data:", result.data);
     }
     catch (err) {
-      console.error("Error setting user data:", err);
+      setUserData(null);
     }
   }
   useEffect(() => {

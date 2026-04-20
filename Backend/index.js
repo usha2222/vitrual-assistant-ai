@@ -11,7 +11,7 @@ dotenv.config();
 
 const app = express();
 app.use(cors({
-  origin:  "https://college-ai-assistant.netlify.app", // Allow requests from this origin
+  origin: [ "https://college-ai-assistant.netlify.app", "http://localhost:5173"], // Allow requests from this origin
   credentials: true, // Allow cookies to be sent with requests
 }));
 app.use(express.json());

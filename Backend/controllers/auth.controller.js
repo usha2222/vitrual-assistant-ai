@@ -21,8 +21,8 @@ const user=await User.create({
     const token=await getToken(user._id);
     res.cookie('token', token, {
         httpOnly: true,
-        secure: false,
-        sameSite: 'strict',
+        secure: true,
+        sameSite: 'None',
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 return res.status(201).json({success: true, message:"User registered successfully",user, token});
@@ -47,8 +47,8 @@ if(!isMatch){
 const token=await getToken(existingEmail._id);
 res.cookie('token', token, {
     httpOnly: true,
-    secure: false,
-    sameSite: 'strict',
+    secure: true,
+    sameSite: 'None',
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 return res.status(200).json({success: true, message:"Login successful", user: existingEmail, token});

@@ -8,7 +8,7 @@ const Home = () => {
   const navigate=useNavigate();
   const handleLogout=async()=>{
     try{
-      const response=await axios.get(`${serverUrl}/api/user/logout`,{withCredentials:true});
+      const response=await axios.get(`${serverUrl}/user/logout`,{withCredentials:true});
       setUserData(null);
       navigate('/login');
     }

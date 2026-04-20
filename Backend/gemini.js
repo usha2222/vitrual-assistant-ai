@@ -22,7 +22,7 @@ const geminiResponse = async (prompt) => {
         };
     } catch (err) {
         console.error("Gemini API Error:", err);
-        return { error: "Failed to get api respnse  response from Gemini API" };
+        return { error: "Failed to get response from Gemini API" };
     }
 };
 
