@@ -11,7 +11,7 @@ dotenv.config();
 
 const app = express();
 app.use(cors({
-  origin: [ "https://college-ai-assistant.netlify.app", "http://localhost:5173"], // Allow requests from this origin
+  origin: [ "https://college-ai-assistant.netlify.app", "http://localhost:5174"], // Allow requests from this origin
   credentials: true, // Allow cookies to be sent with requests
 }));
 app.use(express.json());
@@ -23,25 +23,10 @@ const PORT = process.env.PORT || 8000;
  app.get("/" ,(req,res)=>{
     res.send("Hello to Major Project AI Backend");
   })
+  //for login and register and logout
 app.use('/api/auth', userRouter);
+//for current user and ask to assistant
 app.use('/api/user', authRouter); 
-
-app.get('/api/test', async (req, res) => {
-  try {
-    const prompt = req.query.prompt;
-    if (!prompt) {
-      return res.status(400).json({ error: "Prompt query parameter is required" });
-    }
-    const result = await geminiResponse(prompt);
-    
-    if (result.error) return res.status(500).json(result);
-    res.json({ response: result });
-  } catch (error) {
-    console.error("Route Error:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
 
 app.listen(PORT, ()=>{
   console.log(`Server is running on port ${PORT}`);

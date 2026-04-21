@@ -22,7 +22,7 @@ const Customize = () => {
     const navigate = useNavigate()
     return (
         <div className='w-full min-h-screen bg-gradient-to-t from-[#383737] py-8 to-[#0b08cb]   py-8 items-center to-[#4141c5] '>
-            <button onClick={() => navigate('/')} className='absolute top-[30px] left-[30px]  text-white w-[40px] h-[40px]   cursor-pointer rounded-full  shadow    items-center flex justify-center shadow-gray-400 font-bold  '>
+            <button onClick={() => navigate('/')} className='absolute top-[20px] left-[20px]  text-white w-[40px] h-[40px]   cursor-pointer rounded-full  shadow    items-center flex justify-center shadow-gray-400 font-bold  '>
                 <MdKeyboardBackspace size={20} />
 
             </button>
@@ -36,7 +36,7 @@ const Customize = () => {
                 <Card image={image8} />
                 <Card image={image6} />
 
-                <div className={`w-[180px] h-[250px] border-2 border-gray-600 flex flex-col justify-center items-center rounded-2xl overflow-hidden text-white shadow shadow-olive-400 hover:shadow-md hover:scale-105 transition-transform duration-100 cursor-pointer relative  ${seletectedImage == "input" ? "border-2 border-white shadow-2xl shadow-gray-100" : null}`} onClick={
+                <div className={`w-[45%] min-w-[120px] h-[160px] sm:w-[150px] sm:h-[200px] md:w-[180px] md:h-[250px] border-2 border-gray-600 flex flex-col justify-center items-center rounded-2xl overflow-hidden text-white shadow shadow-olive-400 hover:shadow-md hover:scale-105 transition-transform duration-100 cursor-pointer relative  ${seletectedImage == "input" ? "border-2 border-white shadow-2xl shadow-gray-100" : null}`} onClick={
                     () => {
                         inputImage.current.click()
                         setSelectedImage("input")

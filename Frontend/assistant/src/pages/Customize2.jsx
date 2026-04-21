@@ -9,7 +9,7 @@ const Customize2 = () => {
 const {userData,backEndImage,seletectedImage,setUserData,serverUrl}=useContext(userDataContext);
 const navigate = useNavigate();
 
-    const [assistantName, setAssistantName] = useState(userData?.assistantName || '');
+    const [assistantName, setAssistantName] = useState(userData?.user?.assistantName || '');
     const [loading, setLoading] = useState(false);
 
 const handleAssistantCreation =async (e) => {
@@ -24,7 +24,7 @@ const handleAssistantCreation =async (e) => {
         else{
             formdata.append("imageUrl",seletectedImage);
         }
-        const result=await axios.post(`${serverUrl}/api/user/update-assistant`, formdata,{ withCredentials: true });
+        const result=await axios.post(`${serverUrl}/user/update-assistant`, formdata,{ withCredentials: true });
         console.log(result.data);
         setUserData(result.data);
         navigate('/');

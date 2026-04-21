@@ -61,7 +61,7 @@ const Register = () => {
                 </div>
 {error.length>0 && <span className='text-red-500 text-sm'>{error}</span>}
 
-                <button type="submit" className='w-full  h-[50px] text-white font-semibold  rounded-full text-[19px] outline-none border border-gray-200 bg-transparent' disabled={loading}>
+                <button type="submit" className='w-full cursor-pointer  h-[50px] text-white font-semibold  rounded-full text-[19px] outline-none border border-gray-200 bg-transparent' disabled={loading}>
                     {loading ? 'Registering...' : 'Register'}
                     </button>
                 <p className='text-white text-[14px] '>Already have an account? <Link to='/login'><span className='text-blue-400 cursor-pointer text-xl font-semibold'>Login</span></Link></p>

@@ -20,7 +20,7 @@ const App = () => {
       <Route path='/customize' element={ userData ? <Customize/> : <Navigate to='/register' /> } />
           
       <Route path='/customizename' element={ userData ? <Customize2/> : <Navigate to='/register' /> } />
-      <Route path='/login' element={ !userData ? <Login /> : <Navigate to='/customize' /> } />
+      <Route path='/login' element={ !userData ? <Login /> : <Navigate to='/' /> } />
       <Route path='/register' element={ !userData ? <Register /> : <Navigate to='/' /> } />
       <Route path='*' element={<PageNotFound />} />
     </Routes>

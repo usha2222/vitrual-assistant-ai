@@ -17,8 +17,6 @@ const Login = () => {
     const [loading,setLoading]=useState(false);
     const navigate = useNavigate();
     const {serverUrl,userData,setUserData}=useContext(userDataContext);
-
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
@@ -48,7 +46,7 @@ navigate("/");
     }
 
     return (
-        <div className='w-full h-[100vh] bg-cover flex justify-center items-center' style={{ backgroundImage: `url(${backgroundImage})` }}>
+        <div className='w-full min-h-screen bg-cover flex justify-center items-center' style={{ backgroundImage: `url(${backgroundImage})` }}>
             <form onSubmit={handleSubmit} className=' p-10 w-[80%] max-w-[430px] h-[450px]  bg-[#4b529569] backdrop-blur-md shadow-lg m-3 shadow-blue flex flex-col items-center  gap-6 rounded-3xl'>
                 <h1 className='text-white text-[25px] mb-6 font-semibold'>Login to <span className='text-blue-500'>Virtual Assistant</span></h1>
 
@@ -64,10 +62,10 @@ navigate("/");
                 </div>
 {error.length>0 && <span className='text-red-800 '>{error}</span>}
 
-                <button type="submit" className='w-full  h-[50px] text-white font-semibold  rounded-full text-[19px] outline-none border border-gray-200 bg-transparent' disabled={loading}>
+                <button type="submit" className='w-full  h-[50px] cursor-pointer text-white font-semibold  rounded-full text-[19px] outline-none border border-gray-200 bg-transparent' disabled={loading}>
                     {loading ? 'Logging in...' : 'Login'}
                 </button>
-                <p className='text-white text-[14px] '>Want to Create have an account? <Link to='/register'><span className='text-blue-500 cursor-pointer text-xl font-semibold'>Register</span></Link></p>
+                <p className='text-white text-[14px] '>Want to Create  an account? <Link to='/register'><span className='text-blue-500 cursor-pointer text-xl font-semibold'>Register</span></Link></p>
             </form>
         </div>
     )
