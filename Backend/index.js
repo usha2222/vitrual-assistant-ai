@@ -11,7 +11,7 @@ dotenv.config();
 
 const app = express();
 app.use(cors({
-  origin: [ "https://college-ai-assistant.netlify.app", "http://localhost:5174"], // Allow requests from this origin
+  origin: [ "https://college-ai-assistant.netlify.app", "http://localhost:5173"], // Allow requests from this origin
   credentials: true, // Allow cookies to be sent with requests
 }));
 app.use(express.json());
@@ -27,6 +27,17 @@ const PORT = process.env.PORT || 8000;
 app.use('/api/auth', userRouter);
 //for current user and ask to assistant
 app.use('/api/user', authRouter); 
+
+app.post('/api/test-gemini', async (req, res) => {
+  const { command, assistantName, userName } = req.body;
+  try {
+    const result = await geminiResponse(command, assistantName, userName);
+    res.json(result);
+  } catch (error) { 
+    console.error("Gemini Test Error:", error);
+    res.status(500).json({ error: "Failed to get response from Gemini API" });
+  }
+});
 
 app.listen(PORT, ()=>{
   console.log(`Server is running on port ${PORT}`);

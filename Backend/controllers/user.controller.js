@@ -44,13 +44,20 @@ export const updateAssistant = async (req, res) => {
 export const askToAssistant = async (req, res) => {
     try {
         const { command } = req.body;
+
+        if (!req.userId) {
+            return res.status(401).json({ success: false, message: "Unauthorized: No User ID found" });
+        }
+        
         const user = await User.findById(req.userId).select("-password");
+        user.history.push();
+        user.save();
         if (!user) {
             return res.status(400).json({ success: false, message: "User not found" })
         }
         const userName = user.name;
         const assistantName = user.assistantName || "Assistant";
-        const assistantImage = user.assistantImage
+        const assistantImage = user.assistantImage;
 
         const result = await geminiResponse(command, assistantName, userName);
         if (result.error) {
@@ -63,7 +70,14 @@ export const askToAssistant = async (req, res) => {
         }
 
         //COnvert the string into JSON format
-        const gemResult = JSON.parse(jsonMatch[0]);
+        let gemResult;
+        try {
+            gemResult = JSON.parse(jsonMatch[0]);
+        } catch (parseError) {
+            console.error("JSON Parse Error:", jsonMatch[0]);
+            return res.status(400).json({ success: false, message: "Assistant returned an invalid format." });
+        }
+
         const type = gemResult.type; 
         switch (type) {
             case 'get_date':
@@ -116,14 +130,20 @@ export const askToAssistant = async (req, res) => {
                     userInput: gemResult.userInput,
                     response: gemResult.response,
                 })
-                default:
-                    return res.status(500).json({ success: false, response: "Sorry ,I couldn't understand that. Please try again." });
-
+            default:
+                // Fallback to general response
+                return res.json({
+                    success: true,
+                    type: type || "general",
+                    userInput: gemResult.userInput,
+                    response: gemResult.response || "I processed your request, but I'm not sure what to say.",
+                });
         }
+        return res.json({ success: true, type: gemResult.type, userInput: gemResult.userInput, response: gemResult.response, assistantImage })
     }
     catch (error) {
         console.error("Ask Assistant Error:", error);
-        return res.status(500).json({ success: false, response: "Ask to Assistant Error", error: error.message });
+        return res.status(500).json({ success: false, message: "Ask to Assistant Error", error: error.message });
     }
 
 }

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import{ createContext, useEffect, useState } from 'react'
+import { createContext, useCallback, useEffect, useState } from 'react'
 export const userDataContext = createContext();
 const UserContext = ({ children }) => {
   // const serverUrl='http://localhost:5000/api';
@@ -18,9 +18,9 @@ const UserContext = ({ children }) => {
       setUserData(null);
     }
   }
-   const getGeminiResponse = async (command) => {
+  const getGeminiResponse = useCallback(async (command) => {
     try{
-      const result = await axios.post(`${serverUrl}/user/asktoassistant`, {prompt:command }, { withCredentials: true });
+      const result = await axios.post(`${serverUrl}/user/asktoassistant`,{command},{ withCredentials: true }); 
       console.log("Gemini Response:", result.data);
       return result.data; // Ensure we return the data payload
     }
@@ -29,7 +29,7 @@ const UserContext = ({ children }) => {
       const errorMsg = error.response?.data?.message || error.response?.data?.response || "Failed to connect to assistant";
       return { success: false, message: errorMsg };
     }
-  }
+  }, [serverUrl]);
   
   useEffect(() => {
     handleCurrentUser();
