@@ -6,6 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useContext } from 'react';
 import { userDataContext } from '../context/UserContext';
+import { toast } from 'react-toastify';
 const Register = () => {
 
     const [showPassword, setShowPassword] = useState(false);
@@ -26,14 +27,14 @@ const Register = () => {
             }, { withCredentials: true }
             );
             console.log(result.data);
-            // Do NOT set userData here. The user should log in after registration.
-            // setUserData(result.data);
             if (result.data.success) {
-                alert("Registration Successful");
+                toast.success("Registration Successful");
                 navigate('/login');
             }
         }
         catch (err) {
+                        toast.error(err.response?.data?.message || "Registration failed.Please try again!")
+            
             console.error("Registration Error:", err.response?.data?.message || "Registration failed. Please try again.");
             // setUserData(null); // No need to set to null if it was never set to begin with
             setError(err.response?.data?.message || "Registration failed. Please try again.");
@@ -44,8 +45,8 @@ const Register = () => {
     }
     return (
        <div className='w-full h-[100vh] bg-cover flex justify-center items-center' style={{ backgroundImage: `url(${backgroundImage})` }}>
-            <form onSubmit={handleSubmit} className=' p-10 w-[80%] max-w-[430px] h-[520px] bg-[#4b529569]  backdrop-blur-md shadow-lg m-3 shadow-blue flex flex-col items-center  gap-6 rounded-3xl'>
-                <h1 className='text-white text-[25px] mb-6 font-semibold'>Register to <span className='text-blue-400'>Virtual Assistant</span></h1>
+            <form onSubmit={handleSubmit} className=' p-10 w-[80%] max-w-[430px] h-[500px] bg-[#4b529569]  backdrop-blur-md shadow-lg m-3 shadow-blue flex flex-col items-center  gap-6 rounded-3xl'>
+                <h1 className='text-white text-[20px] md:text-[25px] mb-6 font-semibold'>Register to <span className='text-blue-400'>Virtual Assistant</span></h1>
                 {/* Enter your name */}
                 <input className=' w-full h-[50px] outline-none border border-gray-200 bg-transparent text-white placeholder:gray-300 px-[20px] py-[5px] rounded-full' type="text" placeholder='Enter your  Name ......' value={name} onChange={(e) => setName(e.target.value)} required />
                 {/* Enter your email */}

@@ -50,7 +50,7 @@ export const askToAssistant = async (req, res) => {
         }
         
         const user = await User.findById(req.userId).select("-password");
-        user.history.push();
+        user.history.push(command);
         user.save();
         if (!user) {
             return res.status(400).json({ success: false, message: "User not found" })
@@ -139,7 +139,7 @@ export const askToAssistant = async (req, res) => {
                     response: gemResult.response || "I processed your request, but I'm not sure what to say.",
                 });
         }
-        return res.json({ success: true, type: gemResult.type, userInput: gemResult.userInput, response: gemResult.response, assistantImage })
+       
     }
     catch (error) {
         console.error("Ask Assistant Error:", error);
