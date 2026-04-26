@@ -41,8 +41,8 @@ const Login = () => {
     }
 
     return (
-        <div className='w-full relative overflow-hidden min-h-screen bg-cover flex justify-center items-center' style={{ backgroundImage: `url(${backgroundImage})` }}>
-            <form onSubmit={handleSubmit} className=' p-10 w-[80%] max-w-[430px] h-[450px]  bg-[#4b529569] backdrop-blur-md shadow-lg m-3 shadow-blue flex flex-col items-center  gap-6 rounded-3xl'>
+        <div className='w-full relative overflow-hidden min-h-screen bg-cover flex justify-center items-center py-8' style={{ backgroundImage: `url(${backgroundImage})` }}>
+            <form onSubmit={handleSubmit} className=' p-7 w-[90%] md:w-[80%] max-w-[430px] h-auto min-h-[420px] bg-[#4b529569] backdrop-blur-md shadow-lg m-3 shadow-blue flex flex-col items-center gap-6 rounded-3xl'>
                 <h1 className='text-white text-[20px] md:text-[25px] mb-6 font-semibold'>Login to <span className='text-blue-500'>Virtual Assistant</span></h1>
 
                 {/* Enter your email */}

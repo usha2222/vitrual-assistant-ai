@@ -18,6 +18,16 @@ const UserContext = ({ children }) => {
       setUserData(null);
     }
   }
+  const deleteHistory=async(index)=>{
+    try {
+      const result = await axios.post(`${serverUrl}/user/delete-history`, { index }, { withCredentials: true });
+      console.log("History deleted:", result.data);
+      setUserData(result.data);
+    }
+    catch(err){
+console.log(err)
+    }
+  }
   const getGeminiResponse = useCallback(async (command) => {
     try{
       const result = await axios.post(`${serverUrl}/user/asktoassistant`,{command},{ withCredentials: true }); 
@@ -47,7 +57,8 @@ const UserContext = ({ children }) => {
     setBackEndImage,
     seletectedImage,
     setSelectedImage,
-    getGeminiResponse
+    getGeminiResponse,
+    deleteHistory
   }
   return (
     <userDataContext.Provider value={value}>

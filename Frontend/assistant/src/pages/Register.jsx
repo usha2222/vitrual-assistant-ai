@@ -44,8 +44,8 @@ const Register = () => {
         }
     }
     return (
-       <div className='w-full h-[100vh] bg-cover flex justify-center items-center' style={{ backgroundImage: `url(${backgroundImage})` }}>
-            <form onSubmit={handleSubmit} className=' p-10 w-[80%] max-w-[430px] h-[500px] bg-[#4b529569]  backdrop-blur-md shadow-lg m-3 shadow-blue flex flex-col items-center  gap-6 rounded-3xl'>
+       <div className='w-full min-h-screen bg-cover flex justify-center items-center py-8' style={{ backgroundImage: `url(${backgroundImage})` }}>
+            <form onSubmit={handleSubmit} className=' p-10 w-[90%] md:w-[80%] max-w-[430px] h-auto min-h-[450px] bg-[#4b529569] backdrop-blur-md shadow-lg m-3 shadow-blue flex flex-col items-center gap-6 rounded-3xl'>
                 <h1 className='text-white text-[20px] md:text-[25px] mb-6 font-semibold'>Register to <span className='text-blue-400'>Virtual Assistant</span></h1>
                 {/* Enter your name */}
                 <input className=' w-full h-[50px] outline-none border border-gray-200 bg-transparent text-white placeholder:gray-300 px-[20px] py-[5px] rounded-full' type="text" placeholder='Enter your  Name ......' value={name} onChange={(e) => setName(e.target.value)} required />

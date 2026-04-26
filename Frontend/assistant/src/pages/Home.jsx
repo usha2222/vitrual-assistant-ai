@@ -10,7 +10,7 @@ import { toast } from 'react-toastify';
 
 const Home = () => {
 
-  const { userData, setUserData, serverUrl, getGeminiResponse } = useContext(userDataContext);
+  const { userData, setUserData, serverUrl, getGeminiResponse, } = useContext(userDataContext);
   const navigate = useNavigate();
   const [listening, setListening] = useState(false);
   const recognitionRef = useRef(null);
@@ -32,6 +32,17 @@ const Home = () => {
     } catch (err) {
       setUserData(null);
       toast.error(err.response?.data?.message  || "Logout failed. Please try again!");
+    }
+  }
+  const handleDeleteHistory = async (index) => {
+    try {
+      const response = await axios.post(`${serverUrl}/user/delete-history`, { index }, { withCredentials: true });
+      if (response.data.success) {
+        setUserData(response.data);
+        toast.success("History deleted successfully!");
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to delete history");
     }
   }
   const handleCommand = (data) => {
@@ -245,50 +256,49 @@ const Home = () => {
 
 return (
   <div className='w-full relative overflow-x-hidden flex justify-center items-center flex-col min-h-screen bg-gradient-to-t from-[#38383c] py-8 to-[#0b08cb]  px-4'>
-    <CgMenuRight className='md:hidden text-white absolute top-[20px] right-[20px] w-[30px] h-[30px] cursor-pointer' onClick={() => setToggleMenu(true)} />
-    <div className={`absolute  top-0 w-full h-full bg-[#514a4a53] backdrop-blur-lg p-[20px] flex flex-col gap-6 item-start ${toggleMenu ? "translate-x-0" : "translate-x-full"} transition-transform md:hidden `}>
-      <RxCross2 className='cursor-pointer  md:hidden text-white absolute top-[20px] right-[20px] w-[30px] h-[30px]' onClick={() => setToggleMenu(false)} />
-      <button onClick={() => navigate('/customize')} className='min-w-[150px] text-white px-5 py-3 rounded-full shadow font-bold hover:border border-gray-200 hover:bg-transparent transition-colors duration-200 cursor-pointer shadow-gray-200 mt-12' >
+    <CgMenuRight className='lg:hidden text-white absolute top-[20px] right-[20px] w-[30px] h-[30px] cursor-pointer' onClick={() => setToggleMenu(true)} />
+    <div className={`absolute  top-0 w-full h-full bg-[#514a4a53] backdrop-blur-lg p-[30px] flex flex-col gap-6 item-start ${toggleMenu ? "translate-x-0" : "translate-x-full"} transition-transform lg:hidden `}>
+      <RxCross2 className='cursor-pointer  lg:hidden text-white absolute top-[20px] right-[20px] w-[30px] h-[30px]' onClick={() => setToggleMenu(false)} />
+      <button onClick={() => navigate('/customize')} className=' w-92 mx-auto text-white px-5 py-3 rounded-full shadow font-bold hover:border border-gray-200 hover:bg-transparent transition-colors duration-200 cursor-pointer shadow-gray-200 mt-12' >
         Customize your Assistant
 
       </button>
-      <button onClick={handleLogout} className='min-w-[150px]  text-white px-5 py-3 rounded-full shadow font-bold hover:border border-gray-200 hover:bg-transparent transition-colors duration-200 cursor-pointer shadow-gray-200 '>
+      <button onClick={handleLogout} className='w-92 mx-auto  text-white px-5 py-3 rounded-full shadow font-bold hover:border border-gray-200 hover:bg-transparent transition-colors duration-200 cursor-pointer shadow-gray-200 '>
         Logout
       </button>
-      <hr className='w-full border-gray-400' />
+      <hr className='w-full  border-gray-400' />
       <h1 className='text-white font-semibold text-[19px] underline'>History</h1>
-      {/* <div className='w-full flex-1 overflow-y-auto flex flex-col gap-[10px] pb-20'>
-        {userData?.user?.history?.map((his, index) => (
-          <span key={index} className='text-white text-[15px] border-b border-white/10 pb-1 '>{his}</span>
-        ))}
-        
-      </div> */}
+     
   <div className='w-full max-w-2xl flex-1 overflow-y-auto flex flex-col gap-3 '>
         {userData?.user?.history && userData.user.history.length > 0 ? (
-          userData.user.history.map((his, index) => (
-                      <span key={index} className='text-white text-[15px] border-b border-white/10 pb-1 '> {index+1}. {his}</span>
-
-          ))
+          userData?.user?.history?.map((his, index) => (
+        <div key={index} className='text-white text-[15px] border-b border-white/10 pb-1 flex items-center justify-between'>
+          <span > {index+1}. {his}</span>
+<div className='rounded-full border p-1 shadow-md shadow-gray-600  '>
+                <RxCross2 className='cursor-pointer hover:text-red-400 transition-colors' onClick={() => handleDeleteHistory(index)} />
+               </div>
+          </div>
+        ))
+        
         ) : (   
           <p className='text-gray-300 text-xl text-center mt-10'>No history found.</p>
         )}
       </div>
+      
     </div>
 
-    <button onClick={() => navigate('/customize')} className=' min-w-[150px]  text-white px-5 py-3 rounded-full shadow font-bold hover:border border-gray-200 hover:bg-transparent transition-colors duration-200 cursor-pointer shadow-gray-200 absolute  hidden md:block top-10 right-100'>
+    <button onClick={() => navigate('/customize')} className=' min-w-[150px]  text-white px-5 py-3 rounded-full shadow font-bold hover:border border-gray-200 hover:bg-transparent transition-colors duration-200 cursor-pointer shadow-gray-200 absolute  hidden lg:block top-10 right-100'>
       Customize your Assistant
     </button>
-    <button onClick={handleLogout} className='min-w-[150px]  text-white px-5 py-3 rounded-full shadow font-bold hover:border border-gray-200 hover:bg-transparent transition-colors duration-200 cursor-pointer shadow-gray-200 absolute  hidden md:block top-10 right-55'>
+    <button onClick={handleLogout} className='min-w-[150px]  text-white px-5 py-3 rounded-full shadow font-bold hover:border border-gray-200 hover:bg-transparent transition-colors duration-200 cursor-pointer shadow-gray-200 absolute  hidden lg:block top-10 right-55'>
       Logout
     </button>
-    <button onClick={() => navigate('/history')}  className='min-w-[150px]  text-white px-5 py-3 rounded-full shadow font-bold hover:border border-gray-200 hover:bg-transparent transition-colors duration-200 cursor-pointer shadow-gray-200 absolute  hidden md:block top-10 right-10'>
+    <button onClick={() => navigate('/history')}  className='min-w-[150px]  text-white px-5 py-3 rounded-full shadow font-bold hover:border border-gray-200 hover:bg-transparent transition-colors duration-200 cursor-pointer shadow-gray-200 absolute  hidden lg:block top-10 right-10'>
       History
     </button>
-
-    <div className='w-[180px] h-[180px] md:w-[280px] md:h-[280px] rounded-full overflow-hidden mt-20 shadow-md'>
+    <div className='w-[180px] h-[180px] lg:w-[240px] lg:h-[240px] rounded-full overflow-hidden mt-10 shadow-md'>
       <img src={userData?.user?.assistantImage} alt="assistant" className='h-full w-full object-cover' />
     </div>
-
     <h1 className='text-white text-xl font-semibold py-6'>
       I am <span className='text-blue-500'>{userData?.user?.assistantName}</span>
     </h1>

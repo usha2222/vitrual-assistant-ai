@@ -50,11 +50,12 @@ export const askToAssistant = async (req, res) => {
         }
         
         const user = await User.findById(req.userId).select("-password");
-        user.history.push(command);
-        user.save();
         if (!user) {
             return res.status(400).json({ success: false, message: "User not found" })
         }
+        user.history.push(command);
+        await user.save();
+
         const userName = user.name;
         const assistantName = user.assistantName || "Assistant";
         const assistantImage = user.assistantImage;
@@ -147,4 +148,23 @@ export const askToAssistant = async (req, res) => {
     }
 
 }
-export default { getCurrentUser, updateAssistant, askToAssistant }
+export const deleteHistory = async (req, res) => {
+    try {
+        const { index } = req.body;
+        const user = await User.findById(req.userId).select("-password");
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        if (index !== undefined && index >= 0 && index < user.history.length) {
+            user.history.splice(index, 1);
+            await user.save();
+            return res.status(200).json({ success: true, message: "History item deleted", user });
+        }
+        return res.status(400).json({ success: false, message: "Invalid index" });
+    } catch (error) {
+        console.error("Delete History Error:", error);
+        return res.status(500).json({ success: false, message: "Internal server error" });
+    }
+};
+export default { getCurrentUser, updateAssistant, askToAssistant, deleteHistory }
