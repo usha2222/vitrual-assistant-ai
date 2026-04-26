@@ -86,16 +86,16 @@ const Home = () => {
 
   const speak = (text) => {
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'hi-IN'; // Set language to Hindi (India)
+    utterance.lang = 'en-US'; // Set language to English
     const voices = sythesis.getVoices();
-    const hindiVoice = voices.find(voice => voice.lang === 'hi-IN' || voice.lang.startsWith('hi'));
-    if (hindiVoice) {
-      utterance.voice = hindiVoice;
+    const preferredVoice = voices.find(voice => voice.lang === 'en-US' || voice.lang.startsWith('en'));
+    if (preferredVoice) {
+      utterance.voice = preferredVoice;
     }
     isSpeakingRef.current = true;
     utterance.onend = () => {
       isSpeakingRef.current = false;
-
+      console.log("Speech finished");
     };
 
     sythesis.speak(utterance);
@@ -161,30 +161,24 @@ const Home = () => {
     recognition.onerror = (event) => {
       console.error("Speech Recognition error:", event.error);
       if (!isMounted) return;
-      if (event.error === 'aborted') {
-        console.log("Recognition aborted, ignoring restart attempt to prevent loop.");
-        return;
-      }
       isRecognizingRef.current = false;
       setListening(false);
       if (isMounted && !isSpeakingRef.current) {
-        setTimeout(() => {
-          if (isMounted) {
-            try {
-              recognition.start();
-              console.log("Recognition restarted")
-            }catch(error){
-              if(error.name!=="InvalidStateError") {
+          setTimeout(() => {
+            if (isMounted && !isRecognizingRef.current && !isSpeakingRef.current) {
+              try {
+                recognition.start();
+                console.log("Recognition restarted after error");
+              } catch (error) {
+                if (error.name !== "InvalidStateError") {
                   console.error("Speech Recognition Restart Error:", error);
                 }
               }
             }
-            } , 1000)
-            }
-
-      }
+          }, 1000);
+        }
+    };
     
-
     recognition.onresult = async (event) => {
       if (!isMounted) return;
       const transcript = event.results[event.results.length - 1][0].transcript.trim();
@@ -255,15 +249,14 @@ const Home = () => {
 
 
 return (
-  <div className='w-full relative overflow-x-hidden flex justify-center items-center flex-col min-h-screen bg-gradient-to-t from-[#38383c] py-8 to-[#0b08cb]  px-4'>
-    <CgMenuRight className='lg:hidden text-white absolute top-[20px] right-[20px] w-[30px] h-[30px] cursor-pointer' onClick={() => setToggleMenu(true)} />
-    <div className={`absolute  top-0 w-full h-full bg-[#514a4a53] backdrop-blur-lg p-[30px] flex flex-col gap-6 item-start ${toggleMenu ? "translate-x-0" : "translate-x-full"} transition-transform lg:hidden `}>
+  <div className='w-full relative overflow-x-hidden flex justify-center items-center flex-col min-h-screen bg-gradient-to-t from-[#38383c] py-8 to-[#1816b0]  px-4'>
+    <CgMenuRight className={`lg:hidden text-white absolute top-[20px] right-[20px] w-[30px] h-[30px] cursor-pointer z-20`} onClick={() => setToggleMenu(true)} />
+    <div className={`absolute top-0 left-0 w-full h-full bg-[#575770bd] backdrop-blur-md p-[30px] flex flex-col gap-6 item-start ${toggleMenu ? "translate-x-0" : "translate-x-full"} transition-transform lg:hidden z-50`}>
       <RxCross2 className='cursor-pointer  lg:hidden text-white absolute top-[20px] right-[20px] w-[30px] h-[30px]' onClick={() => setToggleMenu(false)} />
-      <button onClick={() => navigate('/customize')} className=' w-92 mx-auto text-white px-5 py-3 rounded-full shadow font-bold hover:border border-gray-200 hover:bg-transparent transition-colors duration-200 cursor-pointer shadow-gray-200 mt-12' >
+      <button onClick={() => navigate('/customize')} className='w-full max-w-[300px] mx-auto text-white px-5 py-3 rounded-full shadow font-semibold border-gray-200 bg-transparent cursor-pointer mt-12 shadow-gray-200' >
         Customize your Assistant
-
       </button>
-      <button onClick={handleLogout} className='w-92 mx-auto  text-white px-5 py-3 rounded-full shadow font-bold hover:border border-gray-200 hover:bg-transparent transition-colors duration-200 cursor-pointer shadow-gray-200 '>
+      <button onClick={handleLogout} className='w-full max-w-[300px] mx-auto text-white px-5 py-3 rounded-full shadow font-semibold  border-gray-200 bg-transparent cursor-pointer shadow-gray-200'>
         Logout
       </button>
       <hr className='w-full  border-gray-400' />
@@ -296,19 +289,28 @@ return (
     <button onClick={() => navigate('/history')}  className='min-w-[150px]  text-white px-5 py-3 rounded-full shadow font-bold hover:border border-gray-200 hover:bg-transparent transition-colors duration-200 cursor-pointer shadow-gray-200 absolute  hidden lg:block top-10 right-10'>
       History
     </button>
-    <div className='w-[180px] h-[180px] lg:w-[240px] lg:h-[240px] rounded-full overflow-hidden mt-10 shadow-md'>
-      <img src={userData?.user?.assistantImage} alt="assistant" className='h-full w-full object-cover' />
+    
+    <div className='relative flex justify-center items-center mt-10'>
+      {/* Spinning AI Rings */}
+      <div className='absolute w-[205px] h-[205px] lg:w-[265px] lg:h-[265px] rounded-full border-2 border-transparent border-t-blue-500 border-b-blue-500 animate-spin' style={{ animationDuration: '4s' }}></div>
+      <div className='absolute w-[195px] h-[195px] lg:w-[250px] lg:h-[250px] rounded-full border-2 border-transparent border-l-cyan-400 border-r-cyan-400 animate-spin opacity-60' style={{ animationDirection: 'reverse', animationDuration: '2.5s' }}></div>
+      
+      {/* Assistant Image Container */}
+      <div className='w-[180px] h-[180px] lg:w-[230px] lg:h-[230px] rounded-full overflow-hidden shadow-2xl border-4 border-white/10 z-10 bg-black/20'>
+        <img src={userData?.user?.assistantImage} alt="assistant" className='h-full w-full object-cover' />
+      </div>
     </div>
-    <h1 className='text-white text-xl font-semibold py-6'>
+    <h1 className='text-white text-xl font-semibold py-6 text-center'>
       I am <span className='text-blue-500'>{userData?.user?.assistantName}</span>
     </h1>
 
     <div className='flex flex-col items-center bg-transparent '>
       {!aiText && <img src={userImage} alt="listening" className='w-[200px] h-[150px] mix-blend-screen' />}
-
       {aiText && <img src={ai} alt="responding" className='w-[200px]  h-[150px] mix-blend-screen' />}
-      <h1 className='text-gray-200 text-[18px]  py-1 '>{userText ? userText : aiText ? aiText : null}</h1>
+      <h1 className='text-gray-200 text-[18px] text-center px-4 py-1 '>{userText ? userText : aiText ? aiText : null}</h1>
     </div>
+
+    
   </div>
 )
 }
