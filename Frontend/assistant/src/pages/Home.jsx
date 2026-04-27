@@ -45,40 +45,23 @@ const Home = () => {
       toast.error(err.response?.data?.message || "Failed to delete history");
     }
   }
+ 
+
   const handleCommand = (data) => {
     const { type, userInput, response } = data;
     speak(response); // Speak the response from Gemini
-    const query = userInput || response;
-    if (type === "google_search") {
-      window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank');
-    } else if (type === "youtube_search") {
-      window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`, '_blank');
-    } else if (type === "wikipedia_search") {
-      window.open(`https://en.wikipedia.org/wiki/${encodeURIComponent(query)}`, '_blank');
-    } else if (type === "calculator_open") {
-      window.open(`https://www.google.com/search?q=calculator`, '_blank');
-    } else if (type === "weather_show") {
-      window.open(`https://www.google.com/search?q=weather+in+${encodeURIComponent(query)}`, '_blank');
-    } else if (type === "news") {
-      window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}+news`, '_blank');
-    } else if (type === "instagram_search") {
-      window.open(`https://www.instagram.com/${encodeURIComponent(query)}`, '_blank');
-    } else if (type === "linkedin_search") {
-      window.open(`https://www.linkedin.com/in/${encodeURIComponent(query)}`, '_blank');
-    } else if (type === "twitter_search") {
-      window.open(`https://twitter.com/${encodeURIComponent(query)}`, '_blank');
-    } else if (type === "facebook_search") {
-      window.open(`https://www.facebook.com/${encodeURIComponent(query)}`, '_blank');
-    } else if (type === "email_check") {
-      window.open(`https://mail.google.com/mail/u/0/#inbox`, '_blank');
-    } else if (type === "calendar_check") {
-      window.open(`https://calendar.google.com/calendar/u/0/r`, '_blank');
-    } else if (type === "map_search") {
-      window.open(`https://www.google.com/maps/search/${encodeURIComponent(query)}`, '_blank');
-    } else if (type === "music_play" || type === "video_play") {
-      window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`, '_blank');
-    }
+    // Handle different command types
 
+    switch (type) {
+
+      case "get_date":
+      case "get_time":
+      case "get_day":
+      case "get_month":
+      case "general":
+        // Just speak response only
+        break;
+    }
   }
 
 

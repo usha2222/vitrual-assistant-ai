@@ -50,12 +50,11 @@ export const askToAssistant = async (req, res) => {
         }
         
         const user = await User.findById(req.userId).select("-password");
+        user.history.push(command);
+        await user.save();
         if (!user) {
             return res.status(400).json({ success: false, message: "User not found" })
         }
-        user.history.push(command);
-        await user.save();
-
         const userName = user.name;
         const assistantName = user.assistantName || "Assistant";
         const assistantImage = user.assistantImage;
@@ -109,33 +108,11 @@ export const askToAssistant = async (req, res) => {
                     userInput: gemResult.userInput,
                     response: `Current day is ${moment().format('dddd')}`,
                 });
-            case 'general':
-            case 'google_search':
-            case 'wikipedia_search':
-            case 'youtube_search':
-            case 'calculator_open':
-            case 'weather_show':
-            case 'news':
-            case 'instagram_search':
-            case 'twitter_search':
-            case 'facebook_search':
-            case 'email_check':
-            case 'calendar_check':
-            case 'map_search':
-            case 'music_play':
-            case 'video_play':
-
-                return res.json({
-                    success: true,
-                    type: type,
-                    userInput: gemResult.userInput,
-                    response: gemResult.response,
-                })
+            
             default:
-                // Fallback to general response
                 return res.json({
                     success: true,
-                    type: type || "general",
+                    type: gemResult.type || "general",
                     userInput: gemResult.userInput,
                     response: gemResult.response || "I processed your request, but I'm not sure what to say.",
                 });
