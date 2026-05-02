@@ -43,7 +43,7 @@ const Login = () => {
     return (
         <div className='w-full relative overflow-hidden min-h-screen bg-cover flex justify-center items-center py-8' style={{ backgroundImage: `url(${backgroundImage})` }}>
             <form onSubmit={handleSubmit} className=' p-7 w-[90%] md:w-[80%] max-w-[430px] h-auto min-h-[420px] bg-[#4b529569] backdrop-blur-md shadow-lg m-3 shadow-blue flex flex-col items-center gap-6 rounded-3xl'>
-                <h1 className='text-white text-[20px] md:text-[25px] mb-6 font-semibold'>Login to <span className='text-blue-500'>Virtual Assistant</span></h1>
+                <h1 className='text-white text-[18px] lg:text-[23px] mb-6 font-semibold'>Login to <span className='text-blue-500'>College AI Assistant</span></h1>
 
                 {/* Enter your email */}
                 <input className='w-full  h-[50px] outline-none border border-gray-200 bg-transparent text-white placeholder:gray-300 px-[20px] py-[5px] rounded-full' type="email" placeholder='Enter your  Email ......' value={email} onChange={(e) => setEmail(e.target.value)} required />
