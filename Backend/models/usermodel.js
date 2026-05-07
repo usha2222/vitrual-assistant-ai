@@ -15,7 +15,7 @@ const userSchema=new mongoose.Schema({
     },
     assistantName:{
         type:String,
-        default:""
+        default:"alexa"
     },
     assistantImage:{
         type:String,

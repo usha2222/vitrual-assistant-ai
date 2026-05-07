@@ -14,6 +14,7 @@ const Home = () => {
   const { userData, setUserData, serverUrl, getGeminiResponse, } = useContext(userDataContext);
   const navigate = useNavigate();
   const [listening, setListening] = useState(false);
+  const isProcessingRef = useRef(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const recognitionRef = useRef(null);
   const isRecognizingRef = useRef(false);
@@ -79,6 +80,18 @@ const Home = () => {
     isSpeakingRef.current = true;
     utterance.onend = () => {
       isSpeakingRef.current = false;
+      setAiText(""); // Clear AI response text to show "Listening..."
+      setUserText(""); 
+      isProcessingRef.current = false; // Ensure processing flag is reset
+      setIsProcessing(false); // Ensure processing state is reset
+      // Restart recognition so the assistant starts listening for the next question
+      if (recognitionRef.current && !isRecognizingRef.current) {
+        try {
+          recognitionRef.current.start();
+        } catch (error) {
+          console.error("Speech Recognition Restart Error:", error);
+        }
+      }
       console.log("Speech finished");
     };
 
@@ -127,7 +140,7 @@ const Home = () => {
         if (!isMounted) return;
         isRecognizingRef.current = false;
         setListening(false)
-        if (isMounted && !isSpeakingRef.current) {
+        if (isMounted && !isSpeakingRef.current && !isProcessingRef.current) {
           setTimeout(() => {
             if (isMounted) {
               try {
@@ -147,7 +160,7 @@ const Home = () => {
         if (!isMounted) return;
         isRecognizingRef.current = false;
         setListening(false);
-        if (isMounted && !isSpeakingRef.current) {
+        if (isMounted && !isSpeakingRef.current && !isProcessingRef.current) {
           setTimeout(() => {
             if (isMounted && !isRecognizingRef.current && !isSpeakingRef.current) {
               try {
@@ -177,6 +190,7 @@ const Home = () => {
             recognition.stop(); // Stop recognition while processing the command
             isRecognizingRef.current = false;
             setListening(false);
+            isProcessingRef.current = true;
             setIsProcessing(true);
             const data = await getGeminiResponse(transcript);
 
@@ -185,18 +199,23 @@ const Home = () => {
             if (data.message === "Token not found" || data.success === false && data.message?.includes("Token")) {
               toast.error("Session expired. Please login again.");
               setUserData(null);
+              isProcessingRef.current = false;
+              setIsProcessing(false);
               navigate('/login');
               return;
             }
-            setIsProcessing(false);
 
             if (data.success) {
               // speak(data.response);
               handleCommand(data);
+              setIsProcessing(false);
+              isProcessingRef.current = false;
               setAiText(data.response);
               setUserText("");
             }
             else {
+              setIsProcessing(false);
+              isProcessingRef.current = false;
               speak(data.message || "Sorry, I couldn't process that.");
               setAiText(data.message || "Sorry, I couldn't process that.");
               setUserText("");
@@ -204,10 +223,12 @@ const Home = () => {
 
           } catch (error) {
             console.error("Error fetching Gemini response:", error);
+            isProcessingRef.current = false;
             setIsProcessing(false);
             speak("Sorry, there was an error processing your request.");
             setAiText("Sorry, there was an error processing your request.");
             setUserText("");
+
           }
         }
       };
@@ -234,7 +255,7 @@ const Home = () => {
     }
   }, []);
   return (
-    <div className='w-full relative overflow-x-hidden flex justify-center items-center flex-col min-h-screen bg-gradient-to-t from-[#38383c] py-8 to-[#1816b0]  px-4'>
+    <div className='w-full relative overflow-x-hidden flex justify-center items-center flex-col min-h-screen bg-gradient-to-t from-[#38383c] py-8 to-[#0c09bc]  px-4'>
       <CgMenuRight className={`lg:hidden text-white absolute top-[20px] right-[20px] w-[30px] h-[30px] cursor-pointer z-20`} onClick={() => setToggleMenu(true)} />
       <div className={`absolute top-0 left-0 w-full h-full bg-[#575770bd] backdrop-blur-md p-[30px] flex flex-col gap-6 item-start ${toggleMenu ? "translate-x-0" : "translate-x-full"} transition-transform lg:hidden z-50`}>
         <RxCross2 className='cursor-pointer  lg:hidden text-white absolute top-[20px] right-[20px] w-[30px] h-[30px]' onClick={() => setToggleMenu(false)} />
@@ -280,8 +301,10 @@ const Home = () => {
 
         {/* Assistant Image Container */}
         <div className='w-[180px] h-[180px] lg:w-[230px] lg:h-[230px] rounded-full overflow-hidden shadow-2xl border-4 border-white/10 z-10 bg-black/20'>
-          <img src={userData?.user?.assistantImage} alt="assistant" className='h-full w-full object-cover' />
+          <img src='https://tse4.mm.bing.net/th/id/OIP.WmWin1Ew0zOThpMe7erswQAAAA?pid=Api&P=0&h=180' alt="assistant" className='h-full w-full object-cover' />
         </div>
+
+        
       </div>
       <h1 className='text-white text-xl font-semibold py-6 text-center'>
         I am <span className='text-blue-500'>{userData?.user?.assistantName}</span>
@@ -299,7 +322,7 @@ const Home = () => {
                 ? aiText 
                 : listening 
                   ? "Listening..." 
-                  : userText || null
+                  : userText ||  null 
                   }
           </h1>
         </div>

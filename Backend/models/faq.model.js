@@ -10,9 +10,13 @@ const faqSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    alternateQuestions: {
+        type: [String],
+        default: []
+    },
     category: {
         type: String,
-        enum: ['admissions', 'academics' ,'fees', 'courses', 'departments', 'faculty', 'placements', 'facilities', 'address', 'general'],
+        enum: ['admissions', 'academics' ,'fees', 'courses', 'department_location', 'assistant_professor', 'hod', 'placements', 'facilities', 'address', 'general'],
         default: 'general'
     },
     keywords: {
@@ -21,5 +25,5 @@ const faqSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-const FAQ = mongoose.model("knowledgedata", faqSchema);
+const FAQ = mongoose.model("faqquestionsdata", faqSchema);
 export default FAQ

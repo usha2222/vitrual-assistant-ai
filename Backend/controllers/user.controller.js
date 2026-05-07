@@ -162,10 +162,9 @@ export const askToAssistant = async (req, res) => {
             });
         }
 
-        // Remove the assistant's name from the query to get the actual question
-        let cleanedCommand = command.slice(assistantName.length);
-        // Aggressively clean leading punctuation and spaces that might be left after removing the name
-        cleanedCommand = cleanedCommand.replace(/^[^\w\s]+/, '').trim();
+        // Robustly remove the assistant's name using Regex
+        const nameRegex = new RegExp(`\\b${lowerName}\\b`, 'i');
+        let cleanedCommand = command.replace(nameRegex, '').replace(/^[^\w\s]+/, '').trim();
 
         // If the command is empty after removing the assistant's name, respond with a listening prompt
         if (!cleanedCommand) {
