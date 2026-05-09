@@ -1,10 +1,8 @@
 import express from 'express';
-import { askToAssistant, deleteHistory, getCurrentUser, updateAssistant } from '../controllers/user.controller.js';
-import  upload  from '../middlewares/multer.js';
+import { askToAssistant, deleteHistory, getCurrentUser } from '../controllers/user.controller.js';
 import isAuth from '../middlewares/isAuth.js';
 const authRouter = express.Router();
 authRouter.get('/current',isAuth,getCurrentUser);
-authRouter.post('/update-assistant',isAuth,upload.single('assistantImage'),updateAssistant);    
 authRouter.post('/asktoassistant',isAuth,askToAssistant);
 authRouter.post('/delete-history',isAuth,deleteHistory);
 export default authRouter;

@@ -14,7 +14,7 @@ const seedFAQs = async () => {
         const faqs = [
             {
                 "question": "Who are you?",
-                "answer": " I am a voice-enabled virtual assistant for S.D.I.T.S. College. I can help you find answers to your questions related to the college.",
+                "answer": " I am a voice-enabled virtual assistant for S.D.I.T.S. College. I can help you find answers to your questions related to the college, such as admissions, fees, courses, and placements.",
                 "category": "general",
                 "keywords": ["identity", "who are you", "assistant", "introduction"],
                 "alternateQuestions": ["What is your name?", "Tell me about yourself.", "What do you do?"]
@@ -574,7 +574,7 @@ const seedFAQs = async () => {
                 "answer": "Go straight and take a right. Then go ahead and turn left, and take another left. Walk forward—Room No. 116 is just in front of the water cooler.",
                 "category": "department_location",
                 "keywords": ["eee department", "electrical department", "electronics department","electrical location"],
-                "alternativeQuestions": [
+                "alternateQuestions": [
                     "Electrical department kaha hai?",
                     "Where is Electrical department?",
                     "Electronics department location?",
@@ -586,7 +586,7 @@ const seedFAQs = async () => {
                 "answer": "Go straight and take a right. Then go ahead and take a left, and again take a left. Walk straight, and in that row, it is the second last room.",
                 "category": "department_location",
                 "keywords": ["civil department", "ce location"],
-                "alternativeQuestions": [
+                "alternateQuestions": [
                     "Civil department kaha hai?",
                     "Where is CE department?",
                     "Civil engineering location?",
@@ -598,7 +598,7 @@ const seedFAQs = async () => {
                 "answer": "Go straight and take a right. Then go ahead and take a left, and take another left. The first room there is Room No. 114.",
                 "category": "department_location",
                 "keywords": ["mechanical department", "me location"],
-                "alternativeQuestions": [
+                "alternateQuestions": [
                     "Mechanical department kaha hai?",
                     "Where is ME department?",
                     "Mechanical engineering location?",
@@ -610,7 +610,7 @@ const seedFAQs = async () => {
                 "answer": "Go straight to stairs and turn right at room number .",
                 "category": "department_location",
                 "keywords": ["Computer science department", "cse location"],
-                "alternativeQuestions": [
+                "alternateQuestions": [
                     "Computer Science department kaha hai?",
                     "Where is CSE department?",
                     "Computer Science engineering location?",
@@ -622,20 +622,19 @@ const seedFAQs = async () => {
                 "answer": " Go straight and walk beside the stairs at Room Number    .",
                 "category": "department_location",
                 "keywords": ["Placement and innovation cell", "placement cell  location"],
-                "alternativeQuestions": [
+                "alternateQuestions": [
                     "Placement and innovation cell kaha hai?",
                     "Address is Placement and innovation cell?",
                     "Training and palcement cell kaha hai?",
                     "How to reach Placement and innovation cell?"
                 ],
             },
-            ,
             {
                 "question": "Where is the computer lab ?",
                 "answer": " Go straight through stairs and turn right at Room Number     .",
                 "category": "department_location",
                 "keywords": ["computer lab", "computer lab location"],
-                "alternativeQuestions": [
+                "alternateQuestions": [
                     "Computer lab kaha hai?",
                     "Where is computer lab in the college?",
                     "How to reach the computer lab?",
@@ -646,7 +645,7 @@ const seedFAQs = async () => {
                 "answer": "Go straight through stairs  and  turn right and room number is 206.",
                 "category": "department_location",
                 "keywords": ["mathematical department", "mathematical location", "maths"],
-                "alternativeQuestions": [
+                "alternateQuestions": [
                     "Mathematical department kaha hai?",
                     "Where is mathematical department?",
                     "Mathematical engineering location?",
@@ -658,7 +657,7 @@ const seedFAQs = async () => {
                 "answer": "Go straight and turn right. The  Room No. 118.",
                 "category": "department_location",
                 "keywords": ["english lab", "language lab", "room 118", "lab location"],
-                "alternativeQuestions": [
+                "alternateQuestions": [
                     "English lab kaha hai?",
                     "Where is language lab?",
                     "EL lab location?",

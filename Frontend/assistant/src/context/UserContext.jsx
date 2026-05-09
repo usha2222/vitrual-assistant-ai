@@ -5,9 +5,6 @@ const UserContext = ({ children }) => {
   // const serverUrl='http://localhost:5000/api';
   const serverUrl = 'https://clg-ai-assistant.onrender.com/api';
   const [userData, setUserData] = useState(null);
-  const [frontEndImage, setFrontEndImage] =useState(null);
-  const [seletectedImage, setSelectedImage] = useState(null);
-      const [backEndImage, setBackEndImage] = useState(null);
   const handleCurrentUser =async () => {
     try {
       const result = await axios.get(`${serverUrl}/user/current`, { withCredentials: true });
@@ -45,18 +42,11 @@ console.log(err)
     handleCurrentUser();
 
   }, []);
- 
- 
+
   const value = {
     serverUrl,
     userData,
     setUserData,
-    frontEndImage,
-    setFrontEndImage,
-    backEndImage,
-    setBackEndImage,
-    seletectedImage,
-    setSelectedImage,
     getGeminiResponse,
     deleteHistory
   }

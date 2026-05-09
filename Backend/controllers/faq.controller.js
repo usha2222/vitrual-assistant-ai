@@ -39,18 +39,31 @@ export const getFAQs = async (req, res) => {
 };
 
 
+const STOP_WORDS = new Set(['what', 'who', 'is', 'are', 'the', 'how', 'where', 'when', 'you', 'your', 'me', 'tell', 'about', 'can', 'please', 'was', 'were', 'which', 'from', 'this', 'that', 'with', 'for', 'and', 'my', 'do', 'does']);
+
 export const searchFAQ = async (query) => {
     try {
-        const words = query.toLowerCase().trim().split(/\s+/).filter(w => w.length > 1);
-        if (words.length === 0) return null;
+        const queryLower = query.toLowerCase().trim();
+        const allWords = queryLower.split(/\s+/).filter(w => w.length > 1);
+        
+        // Filter out stop words to find the "meaningful" part of the query
+        const searchWords = allWords.filter(w => !STOP_WORDS.has(w));
+        
+        // If the query only has stop words (e.g. "Who are you?"), use all words, otherwise use meaningful words
+        const effectiveWords = searchWords.length > 0 ? searchWords : allWords;
+        if (effectiveWords.length === 0) return null;
+
+        // Escape special characters and use word boundaries to avoid partial matches (like 'is' in 'mission')
+        const escapedWords = effectiveWords.map(w => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+        const searchRegex = new RegExp(`\\b(${escapedWords.join('|')})\\b`, 'i');
 
         // Find potential matches
         const matches = await FAQ.find({
             $or: [
-                { keywords: { $in: words } },
-                { question: { $regex: words.join('|'), $options: 'i' } },
-                { alternateQuestions: { $regex: words.join('|'), $options: 'i' } },
-                { category: { $in: words } }
+                { keywords: { $regex: searchRegex } },
+                { question: { $regex: searchRegex } },
+                { alternateQuestions: { $regex: searchRegex } },
+                { category: { $regex: searchRegex } }
             ]
         });
 
@@ -62,13 +75,18 @@ export const searchFAQ = async (query) => {
             const faqQuestion = faq.question.toLowerCase();
             const faqKeywords = faq.keywords.map(k => k.toLowerCase());
             
-            // Higher score for exact question match
-            if (faqQuestion.includes(query.toLowerCase())) score += 10;
+            // Higher score for exact question match or strong inclusion
+            if (faqQuestion.includes(queryLower) || queryLower.includes(faqQuestion)) score += 10;
             
             // Score based on how many query words match keywords or the question
-            words.forEach(word => {
-                if (faqKeywords.includes(word)) score += 5;
-                if (faqQuestion.includes(word)) score += 3;
+            allWords.forEach(word => {
+                const isStopWord = STOP_WORDS.has(word);
+                const wordRegex = new RegExp(`\\b${word}\\b`, 'i');
+                
+                // Stop words give much lower scores to prevent false positives
+                if (faqKeywords.some(kw => wordRegex.test(kw))) score += isStopWord ? 1 : 5;
+                if (wordRegex.test(faqQuestion)) score += isStopWord ? 1 : 3;
+                if (faq.alternateQuestions.some(aq => wordRegex.test(aq))) score += isStopWord ? 1 : 3;
                 if (faq.category.toLowerCase() === word) score += 2;
             });
 
@@ -77,7 +95,11 @@ export const searchFAQ = async (query) => {
 
         // Sort by score descending and return the best one
         scoredMatches.sort((a, b) => b.score - a.score);
-        return scoredMatches[0].score > 0 ? scoredMatches[0].faq : null;
+
+        // Thresholding: Increased to 7 to ensure at least one meaningful word matches
+        const MIN_SCORE_THRESHOLD = 7;
+        const bestMatch = scoredMatches[0];
+        return bestMatch && bestMatch.score >= MIN_SCORE_THRESHOLD ? bestMatch.faq : null;
     } catch (error) {
         console.error("FAQ search error:", error);
         return null;

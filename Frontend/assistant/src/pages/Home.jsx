@@ -8,7 +8,7 @@ import { CgMenuRight } from "react-icons/cg";
 import { RxCross2 } from "react-icons/rx";
 import { toast } from 'react-toastify';
 import Footer from '../component/Footer';
-
+import sditslogo from '../assets/sditslogo.png'
 const Home = () => {
 
   const { userData, setUserData, serverUrl, getGeminiResponse, } = useContext(userDataContext);
@@ -259,9 +259,7 @@ const Home = () => {
       <CgMenuRight className={`lg:hidden text-white absolute top-[20px] right-[20px] w-[30px] h-[30px] cursor-pointer z-20`} onClick={() => setToggleMenu(true)} />
       <div className={`absolute top-0 left-0 w-full h-full bg-[#575770bd] backdrop-blur-md p-[30px] flex flex-col gap-6 item-start ${toggleMenu ? "translate-x-0" : "translate-x-full"} transition-transform lg:hidden z-50`}>
         <RxCross2 className='cursor-pointer  lg:hidden text-white absolute top-[20px] right-[20px] w-[30px] h-[30px]' onClick={() => setToggleMenu(false)} />
-        <button onClick={() => navigate('/customize')} className='w-full max-w-[300px] mx-auto text-white px-5 py-3 rounded-full shadow font-semibold border-gray-200 bg-transparent cursor-pointer mt-12 shadow-gray-200' >
-          Customize your Assistant
-        </button>
+        
         <button onClick={handleLogout} className='w-full max-w-[300px] mx-auto text-white px-5 py-3 rounded-full shadow font-semibold  border-gray-200 bg-transparent cursor-pointer shadow-gray-200'>
           Logout
         </button>
@@ -284,9 +282,7 @@ const Home = () => {
           )}
         </div>
       </div>
-      <button onClick={() => navigate('/customize')} className=' min-w-[150px]  text-white px-5 py-3 rounded-full shadow font-bold hover:border border-gray-200 hover:bg-transparent transition-colors duration-200 cursor-pointer shadow-gray-200 absolute  hidden lg:block top-7 right-100'>
-        Customize your Assistant
-      </button>
+     
       <button onClick={handleLogout} className='min-w-[150px]  text-white px-5 py-3 rounded-full shadow font-bold hover:border border-gray-200 hover:bg-transparent transition-colors duration-200 cursor-pointer shadow-gray-200 absolute  hidden lg:block top-7 right-55'>
         Logout
       </button>
@@ -296,12 +292,12 @@ const Home = () => {
 
       <div className='relative flex justify-center items-center mt-25'>
         {/* Spinning AI Rings */}
-        <div className='absolute w-[205px] h-[205px] lg:w-[265px] lg:h-[265px] rounded-full border-2 border-transparent border-t-blue-500 border-b-blue-500 animate-spin' style={{ animationDuration: '4s' }}></div>
-        <div className='absolute w-[195px] h-[195px] lg:w-[250px] lg:h-[250px] rounded-full border-2 border-transparent border-l-cyan-400 border-r-cyan-400 animate-spin opacity-60' style={{ animationDirection: 'reverse', animationDuration: '2.5s' }}></div>
+        <div className='absolute w-[205px] h-[205px] lg:w-[265px] lg:h-[265px] rounded-full border-2 border-transparent border-t-gray-300 border-b-gray-300 animate-spin' style={{ animationDuration: '4s' }}></div>
+        <div className='absolute w-[195px] h-[195px] lg:w-[250px] lg:h-[250px] rounded-full border-2 border-transparent border-l-gray-300 border-r-gray-300 animate-spin opacity-60' style={{ animationDirection: 'reverse', animationDuration: '2.5s' }}></div>
 
         {/* Assistant Image Container */}
         <div className='w-[180px] h-[180px] lg:w-[230px] lg:h-[230px] rounded-full overflow-hidden shadow-2xl border-4 border-white/10 z-10 bg-black/20'>
-          <img src='https://tse4.mm.bing.net/th/id/OIP.WmWin1Ew0zOThpMe7erswQAAAA?pid=Api&P=0&h=180' alt="assistant" className='h-full w-full object-cover' />
+          <img src={sditslogo} alt="assistant" className='h-full w-full object-fit' />
         </div>
 
         
