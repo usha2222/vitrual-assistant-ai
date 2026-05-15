@@ -15,15 +15,21 @@ const userSchema=new mongoose.Schema({
     },
     assistantName:{
         type:String,
-        default:"eva",
+        default:"Eva",
     },
     assistantImage:{
         type:String,
     },
     history:[
         {type:String}
-    ]
-},{
+    ], 
+    isPremium: {
+        type: Boolean,
+        default: false
+    },
+},
+
+{
         timestamps:true
     }
 )

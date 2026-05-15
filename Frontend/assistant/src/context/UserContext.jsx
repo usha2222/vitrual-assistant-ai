@@ -10,7 +10,7 @@ const UserContext = ({ children }) => {
       const result = await axios.get(`${serverUrl}/user/current`, { withCredentials: true });
       setUserData(result.data.user ? result.data : null);
       // console.log("Current User Data:", result.data);
-    }
+    }m
     catch (err) {
       setUserData(null);
     }
@@ -25,14 +25,14 @@ const UserContext = ({ children }) => {
 console.log(err)
     }
   }
-  const getGeminiResponse = useCallback(async (command) => {
+  const askAssistant = useCallback(async (command, preferredModel) => {
     try{
-      const result = await axios.post(`${serverUrl}/user/asktoassistant`,{command},{ withCredentials: true }); 
-      console.log("Gemini Response:", result.data);
+      const result = await axios.post(`${serverUrl}/user/asktoassistant`,{command, preferredModel},{ withCredentials: true }); 
+      console.log("Assistant Response:", result.data);
       return result.data; // Ensure we return the data payload
     }
     catch (error) {
-      console.error("Gemini Response Error:", error);
+      console.error("Assistant Response Error:", error);
       const errorMsg = error.response?.data?.message || error.response?.data?.response || "Failed to connect to assistant";
       return { success: false, message: errorMsg };
     }
@@ -47,7 +47,7 @@ console.log(err)
     serverUrl,
     userData,
     setUserData,
-    getGeminiResponse,
+    askAssistant,
     deleteHistory
   }
   return (

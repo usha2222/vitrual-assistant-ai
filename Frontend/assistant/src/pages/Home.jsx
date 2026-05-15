@@ -9,9 +9,13 @@ import { RxCross2 } from "react-icons/rx";
 import { toast } from 'react-toastify';
 import Footer from '../component/Footer';
 import sditslogo from '../assets/sditslogo.png'
+import { MdHistory } from "react-icons/md";
+import { FiLogOut } from "react-icons/fi";
+import { MdOutlineCreditScore } from "react-icons/md";
+
 const Home = () => {
 
-  const { userData, setUserData, serverUrl, getGeminiResponse, } = useContext(userDataContext);
+  const { userData, setUserData, serverUrl, askAssistant, } = useContext(userDataContext);
   const navigate = useNavigate();
   const [listening, setListening] = useState(false);
   const isProcessingRef = useRef(false);
@@ -24,6 +28,108 @@ const Home = () => {
   const [aiText, setAiText] = useState("");
   const [toggleMenu, setToggleMenu] = useState(false);
   const hasGreetedRef = useRef(false);
+  const [preferredModel, setPreferredModel] = useState("Gemini");
+  const [showPayButton, setShowPayButton] = useState(false);
+  const [isPaying, setIsPaying] = useState(false);
+
+  // Fix closure bug: Speech recognition needs to know the current model without restarting the effect
+  const preferredModelRef = useRef(preferredModel);
+  useEffect(() => {
+    preferredModelRef.current = preferredModel;
+  }, [preferredModel]);
+
+
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  const handleUpgradeAndSwitch = async () => {
+    const isLoaded = await loadRazorpayScript();
+    if (!isLoaded) {
+      toast.error("Razorpay SDK failed to load.");
+      return;
+    }
+
+    try {
+      setIsPaying(true);
+      const { data: orderData } = await axios.post(`${serverUrl}/payment/create-order`, { amount: 499 }, { withCredentials: true });
+
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: orderData.amount,
+        currency: "INR",
+        name: "Premium AI Access",
+        order_id: orderData.orderId,
+        handler: async (response) => {
+          try {
+            const { data: verifyData } = await axios.post(`${serverUrl}/payment/verify-payment`, response, { withCredentials: true });
+            if (verifyData.success) {
+              toast.success("Payment Successful! Switching to Groq...");
+              // Sync local state with the actual data from database
+              setUserData({ ...userData, user: verifyData.user });
+              setPreferredModel("Groq");
+              setShowPayButton(false);
+            } else {
+              toast.error(verifyData.message || "Payment verification failed.");
+            }
+          } catch (verifyError) {
+            toast.error("An error occurred during verification. Please contact support.");
+          } finally {
+            setIsPaying(false);
+          }
+        },
+        modal: { ondismiss: () => setIsPaying(false) },
+        theme: { color: "#3b82f6" }
+      };
+      new window.Razorpay(options).open();
+    } catch (error) {
+      toast.error("Payment failed to initialize.");
+      setIsPaying(false);
+    }
+  };
+
+  // Effect to manage showPayButton based on premium status
+  useEffect(() => {
+    // Show button if not premium and they have used at least one question (or always if preferred)
+    if (userData && !userData.user.isPremium && userData.user.history.length >= 20) {
+      setShowPayButton(true);
+    } else {
+      setShowPayButton(false);
+    }
+  }, [userData]);
+
+  const handleModelFailure = (error) => {
+    const errorMessage = error?.response?.data?.message || "An unexpected error occurred.";
+    if (!userData?.user?.isPremium) {
+      setShowPayButton(true);
+      const msg = errorMessage.includes("limit") ? errorMessage : `${preferredModel} is currently overloaded. Please Buy Credits to switch engines.`;
+      if (!isSpeakingRef.current) speak(msg); // Only speak if not already speaking
+      setAiText(msg);
+    } else {
+      // Premium cycling logic: Gemini -> Groq -> Mistral
+      let current = preferredModel;
+      let next = "";
+      if (preferredModel === "Gemini") {
+        next = "Groq";
+      } else if (preferredModel === "Groq") {
+        next = "Mistral";
+      } else {
+        next = "Gemini";
+      }
+
+      const switchMsg = `${current} is not responding. Switching to ${next}...`;
+      toast.info(switchMsg);
+      if (!isSpeakingRef.current) speak(switchMsg);
+      setAiText(switchMsg);
+      setPreferredModel(next);
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -81,7 +187,7 @@ const Home = () => {
     utterance.onend = () => {
       isSpeakingRef.current = false;
       setAiText(""); // Clear AI response text to show "Listening..."
-      setUserText(""); 
+      setUserText("");
       isProcessingRef.current = false; // Ensure processing flag is reset
       setIsProcessing(false); // Ensure processing state is reset
       // Restart recognition so the assistant starts listening for the next question
@@ -192,7 +298,7 @@ const Home = () => {
             setListening(false);
             isProcessingRef.current = true;
             setIsProcessing(true);
-            const data = await getGeminiResponse(transcript);
+            const data = await askAssistant(transcript, preferredModelRef.current);
 
             console.log("Gemini Response:", data);
 
@@ -206,7 +312,9 @@ const Home = () => {
             }
 
             if (data.success) {
-              // speak(data.response);
+              if (data.user) {
+                setUserData({ ...userData, user: data.user });
+              }
               handleCommand(data);
               setIsProcessing(false);
               isProcessingRef.current = false;
@@ -216,19 +324,22 @@ const Home = () => {
             else {
               setIsProcessing(false);
               isProcessingRef.current = false;
-              speak(data.message || "Sorry, I couldn't process that.");
-              setAiText(data.message || "Sorry, I couldn't process that.");
+
+              // If it's a limit or premium error, trigger the failure handler UI
+              if (data.message.includes("limit") || data.message.includes("premium")) {
+                handleModelFailure({ response: { data: { message: data.message } } });
+              } else {
+                speak(data.message || "Sorry, I couldn't process that.");
+                setAiText(data.message || "Sorry, I couldn't process that.");
+              }
               setUserText("");
             }
 
           } catch (error) {
-            console.error("Error fetching Gemini response:", error);
             isProcessingRef.current = false;
             setIsProcessing(false);
-            speak("Sorry, there was an error processing your request.");
-            setAiText("Sorry, there was an error processing your request.");
+            handleModelFailure(error); // Pass the error object
             setUserText("");
-
           }
         }
       };
@@ -255,16 +366,24 @@ const Home = () => {
     }
   }, []);
   return (
-    <div className='w-full relative overflow-x-hidden flex justify-center items-center flex-col min-h-screen bg-gradient-to-t from-[#38383c] py-8 to-[#0c09bc]  px-4'>
+    <div className='w-full relative overflow-x-hidden flex justify-center items-center flex-col min-h-screen bg-gradient-to-t from-[#38383c] py-8 to-[#5351e1]  px-4'>
       <CgMenuRight className={`lg:hidden text-white absolute top-[20px] right-[20px] w-[30px] h-[30px] cursor-pointer z-20`} onClick={() => setToggleMenu(true)} />
       <div className={`absolute top-0 left-0 w-full h-full bg-[#575770bd] backdrop-blur-md p-[30px] flex flex-col gap-6 item-start ${toggleMenu ? "translate-x-0" : "translate-x-full"} transition-transform lg:hidden z-50`}>
         <RxCross2 className='cursor-pointer  lg:hidden text-white absolute top-[20px] right-[20px] w-[30px] h-[30px]' onClick={() => setToggleMenu(false)} />
-        
-        <button onClick={handleLogout} className='w-full max-w-[300px] mx-auto text-white px-5 py-3 rounded-full shadow font-semibold  border-gray-200 bg-transparent cursor-pointer shadow-gray-200'>
-          Logout
+        <button onClick={handleLogout} className='w-full max-w-[300px] mx-auto text-white px-5 py-3 rounded-full shadow-lg font-semibold border border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all flex items-center justify-center gap-2'>
+         Logout <FiLogOut size={16} /> 
         </button>
+        {showPayButton && !userData?.user?.isPremium && (
+          <button onClick={handleUpgradeAndSwitch} disabled={isPaying} className='w-full max-w-[300px] mx-auto text-white px-5 py-3 rounded-full shadow-xl font-bold bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-400 hover:to-orange-500 transition-all cursor-pointer mt-4 border border-white/30 flex items-center justify-center gap-2'>
+            {isPaying ? "Processing..." : "✨ UPGRADE TO PREMIUM"}
+          </button>
+        )}
         <hr className='w-full  border-gray-400' />
-        <h1 className='text-white font-semibold text-[19px] underline'>History</h1>
+
+        <h1 className='text-white font-semibold text-[19px] underline flex items-center gap-2'>
+          <MdHistory size={22} /> History
+        </h1>
+
 
         <div className='w-full max-w-2xl flex-1 overflow-y-auto flex flex-col gap-3 '>
           {userData?.user?.history && userData.user.history.length > 0 ? (
@@ -282,47 +401,63 @@ const Home = () => {
           )}
         </div>
       </div>
-     
-      <button onClick={handleLogout} className='min-w-[150px]  text-white px-5 py-3 rounded-full shadow font-bold hover:border border-gray-200 hover:bg-transparent transition-colors duration-200 cursor-pointer shadow-gray-200 absolute  hidden lg:block top-7 right-55'>
-        Logout
-      </button>
-      <button onClick={() => navigate('/history')} className='min-w-[150px]  text-white px-5 py-3 rounded-full shadow font-bold hover:border border-gray-200 hover:bg-transparent transition-colors duration-200 cursor-pointer shadow-gray-200 absolute  hidden lg:block top-7 right-10'>
-        History
-      </button>
 
-      <div className='relative flex justify-center items-center mt-25'>
+      <div className='absolute hidden lg:flex items-center gap-4 top-8 right-10 z-40'>
+        <button onClick={() => navigate('/history')} className='min-w-[130px] text-white px-6 py-2.5 rounded-full shadow-lg font-bold border border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/20 hover:scale-105 transition-all duration-200 cursor-pointer flex items-center gap-2'>
+         History <MdHistory size={18} /> 
+        </button>
+        <button onClick={handleLogout} className='min-w-[130px] text-white px-6 py-2.5 rounded-full shadow-lg font-bold border border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/20 hover:scale-105 transition-all duration-200 cursor-pointer flex items-center gap-2'>
+          Logout <FiLogOut size={16} />
+        </button>
+      </div>
+
+      {showPayButton && !userData?.user?.isPremium && (
+        <div className='fixed bottom-10 right-4 lg:right-10 z-[60]'>
+            <button onClick={handleUpgradeAndSwitch} disabled={isPaying}  className='min-w-[220px] text-white px-8 py-4 rounded-full shadow-[0_0_20px_rgba(234,179,8,0.4)] font-bold bg-gradient-to-r from-yellow-500 via-orange-500 to-yellow-600 hover:shadow-[0_0_30px_rgba(234,179,8,0.6)] hover:scale-110 active:scale-95 transition-all duration-300 cursor-pointer border border-white/30 flex items-center justify-center gap-2'>
+               {isPaying ? "Processing..." : <><span className="animate-pulse text-xl">✨</span> UPGRADE TO PREMIUM</>}
+            </button>
+        </div>
+      )}
+
+      <div className=' text-center'>
+        <h1 className='text-gray-50 text-xl lg:text-4xl font-bold'>Smart College <span className='text-cyan-400'>AI Assistant</span></h1>
+        <p className='text-gray-300 mt-2 text-sm lg:text-base   '>An AI-based voice assistant for campus guidance and student support</p>
+      </div>
+      <div className='relative flex justify-center items-center mt-15'>
         {/* Spinning AI Rings */}
-        <div className='absolute w-[205px] h-[205px] lg:w-[265px] lg:h-[265px] rounded-full border-2 border-transparent border-t-gray-300 border-b-gray-300 animate-spin' style={{ animationDuration: '4s' }}></div>
-        <div className='absolute w-[195px] h-[195px] lg:w-[250px] lg:h-[250px] rounded-full border-2 border-transparent border-l-gray-300 border-r-gray-300 animate-spin opacity-60' style={{ animationDirection: 'reverse', animationDuration: '2.5s' }}></div>
+        <div className='absolute w-[205px] h-[205px] lg:w-[245px] lg:h-[245px] rounded-full border-2 border-transparent border-t-gray-300 border-b-gray-300 animate-spin' style={{ animationDuration: '4s' }}></div>
+        <div className='absolute w-[195px] h-[195px] lg:w-[230px] lg:h-[230px] rounded-full border-2 border-transparent border-l-gray-300 border-r-gray-300 animate-spin opacity-60' style={{ animationDirection: 'reverse', animationDuration: '2.5s' }}></div>
 
         {/* Assistant Image Container */}
-        <div className='w-[180px] h-[180px] lg:w-[230px] lg:h-[230px] rounded-full overflow-hidden shadow-2xl border-4 border-white/10 z-10 bg-black/20'>
+        <div className='w-[180px] h-[180px] lg:w-[210px] lg:h-[210px] rounded-full overflow-hidden shadow-2xl border-4 border-white/10 z-10 bg-black/20'>
           <img src={sditslogo} alt="assistant" className='h-full w-full object-fit' />
         </div>
 
-        
+
       </div>
-      <h1 className='text-white text-xl font-semibold py-6 text-center'>
-        I am <span className='text-blue-500'>{userData?.user?.assistantName}</span>
+      <h1 className='text-gray-300 text-[14px] py-9 text-center font-semibold'>
+        <span className='text-cyan-400 text-[18px] font-bold'>Meet {userData?.user?.assistantName}! </span>Ask me anything about college
       </h1>
- 
-        <div className='flex flex-col items-center bg-transparent '>
-          {(listening || isProcessing) && !aiText && <img src={userImage} alt="listening" className='w-[200px] h-[150px] mix-blend-screen' />}
-          {/* isprocessing is t rue then show processing text if aiText is present then show aiText if listening is true then show listening else show userText */}
-          {
-          aiText && !isProcessing && <img src={ai} alt="responding" className='w-[200px]  h-[150px] mix-blend-screen' />}
-          <h1 className='text-gray-200 text-[13px] lg:text-[15px] font-medium text-center px-4 lg:px-15 py-1 '>
-            {isProcessing 
-              ? "Processing..." 
-              : aiText 
-                ? aiText 
-                : listening 
-                  ? "Listening..." 
-                  : userText ||  null 
-                  }
-          </h1>
-        </div>
-      <Footer/>
+
+      <div className='flex flex-col items-center bg-transparent '>
+        {(listening || isProcessing) && !aiText && <img src={userImage} alt="listening" className='w-[150px] h-[120px] mix-blend-screen' />}
+        {/* isprocessing is t rue then show processing text if aiText is present then show aiText if listening is true then show listening else show userText */}
+        {
+          aiText && !isProcessing && <img src={ai} alt="responding" className='w-[100px]  h-[120px] mix-blend-screen' />}
+        <h1 className='text-gray-200 text-[13px] lg:text-[15px] font-medium text-center px-4 lg:px-15 py-1 '>
+          {isProcessing
+            ? "Processing..."
+            : aiText
+              ? aiText
+              : listening
+                ? "Listening..."
+                : userText || null
+          }
+        </h1>
+      </div>
+      <div className='absolute top-2 right-100'>
+      </div>
+      <Footer />
     </div>
   )
 }

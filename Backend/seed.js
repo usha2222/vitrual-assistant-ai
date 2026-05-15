@@ -17,14 +17,14 @@ const seedFAQs = async () => {
                 "answer": " I am a voice-enabled virtual assistant for S.D.I.T.S. College. I can help you find answers to your questions related to the college, such as admissions, fees, courses, and placements.",
                 "category": "general",
                 "keywords": ["identity", "who are you", "assistant", "introduction"],
-                "alternateQuestions": ["What is your name?", "Tell me about yourself.", "What do you do?"]
+                "alternateQuestions": ["What is your name?", "Tell me about yourself.", "What do you do?", "Tume kaun ho?"]
             },
             {
                 "question": "Who developed you?",
                 "answer": "I was developed by Usha Patel, Rajni Verma, and Priti Patel, final year students of the Computer Science Engineering department of Shree Dadaji Institute of Technology and Science. They created me to assist students with information about the college.",
                 "category": "general",
                 "keywords": ["developer", "created", "developed", "who made you", "usha", "rajni", "priti"],
-                "alternateQuestions": ["Who is your creator?", "Who made you?", "Who are your developers?"]
+                "alternateQuestions": ["Who is your creator?", "Who made you?", "Who are your developers?","Tumko kisne banaya?"]
             },
 
             {
@@ -39,14 +39,14 @@ const seedFAQs = async () => {
                 "answer": "SDITS Khandwa is run by Dadaji Dhuniwale Professional Education And Development Co-operative Society Limited Khandwa.",
                 "category": "general",
                 "keywords": ["who runs SDITS", "Dadaji Dhuniwale Society", "management", "society", "Khandwa"],
-                "alternateQuestions": ["Which society runs the college?", "Who is the management of SDITS?"]
+                "alternateQuestions": ["Which society runs the college?", "Who is the management of SDITS?","SDITS ko run kaun karta hai?"]
             },
             {
                 "question": "What was year SDITS established?",
                 "answer": "Shree Dadaji Institute of Technology and Science was established in the year 2004.",
                 "category": "general",
                 "keywords": ["established", "year", "founded", "started", "2004"],
-                "alternateQuestions": ["When was SDITS founded?", "How old is the college?",]
+                "alternateQuestions": ["When was SDITS founded?", "How old is the college?","SDITS kab establish hui thi?"]
             },
             {
                 "question": "What is the vision of SDITS Khandwa?",
@@ -102,7 +102,7 @@ const seedFAQs = async () => {
                 "question": "Where is the canteen?",
                 "answer": "Come out of the college building. The path to the canteen is on the side of the front garden.",
                 "category": "general",
-                "keywords": ["food", "canteen", "where is canteen"],
+                "keywords": [ "canteen", "where is canteen"],
                 "alternateQuestions": ["How to find the canteen?", "Where can I get food?"]
             },
 
@@ -354,7 +354,7 @@ const seedFAQs = async () => {
                 "question": "Where SDITS is located?",
                 "answer": "Shree Dadaji Institute of Technology and Science  is located at Rehmapur Indore Road Khandwa Madhya Pradesh 450001.",
                 "category": "address",
-                "keywords": ["SDITS address", "address", "located"],
+                "keywords": ["SDITS address", "address", " sdits located"],
                 "alternateQuestions": ["What is the address of the college?", "Where is SDITS located?", "SDITS kaha par located hai"]
             },
 
@@ -362,7 +362,7 @@ const seedFAQs = async () => {
                 "question": "Who is the HOD of Computer Science Engineering (CSE)?",
                 "answer": "The Head of the Computer Science Engineering department is Ankit Bakshi.",
                 "category": "hod",
-                "keywords": ["hod", "cse", "computer science engineering", "computer science", "ankit bakshi", "head of department", "faculty"],
+                "keywords": ["hod", "cse", "computer science engineering", "computer science", "head of department"],
                 "alternateQuestions": [
                     "Who is the head of CSE department?",
                     "CSE ke department HOD kaun hai?",
@@ -375,7 +375,7 @@ const seedFAQs = async () => {
                 "question": "Who is the HOD of Data Science (DS)?",
                 "answer": "The Head of the Data Science department is Mr. Ankit Bakshi.",
                 "category": "hod",
-                "keywords": ["hod", "ds", "data science", "ankit bakshi", "head of department", "faculty"],
+                "keywords": ["hod","ds", "data science",  "head of department"],
                 "alternateQuestions": [
                     "Who is the head of DS department?",
                     "Data Science HOD kaun hai?",
@@ -388,7 +388,7 @@ const seedFAQs = async () => {
                 "question": "Who is the HOD of Mechanical Engineering (ME)?",
                 "answer": "The Head of the Mechanical Engineering department is Mr. L.P. Ladhe.",
                 "category": "hod",
-                "keywords": ["hod", "me", "mechanical engineering", "mechanical", "l.p. ladhe", "head of department", "faculty"],
+                "keywords": ["hod", "me", "mechanical engineering", "mechanical",, "head of department"],
                 "alternateQuestions": [
                     "Who is the head of Mechanical department?",
                     "Mechanical HOD kaun hai?",
@@ -401,7 +401,7 @@ const seedFAQs = async () => {
                 "question": "Who is the HOD of Civil Engineering (CE)?",
                 "answer": "The Head of the Civil Engineering department is Mr. Ashish Paliwal",
                 "category": "hod",
-                "keywords": ["hod", "ce", "civil engineering", "civil", "ashish paliwal", "head of department", "faculty"],
+                "keywords": ["hod", "ce", "civil engineering", "civil", "head of department"],
                 "alternateQuestions": [
                     "Who is the head of Civil department?",
                     "Civil HOD kaun hai?",
@@ -412,9 +412,9 @@ const seedFAQs = async () => {
             },
             {
                 "question": "Who is the HOD of Electrical Engineering (EE)?",
-                "answer": "The Head of the Electrical Engineering department is Mr. Ramakant ",
+                "answer": "The Head of the Electrical Engineering department is Mr. Ramakant Sukla",
                 "category": "hod",
-                "keywords": ["hod", "ee", "electrical engineering", "electrical", "ramakant", "head of department", "faculty"],
+                "keywords": ["hod", "ee", "electrical engineering", "electrical", "head of department"],
                 "alternateQuestions": [
                     "Who is the head of Electrical department?",
                     "Electrical ke HOD kaun hai?",
@@ -428,7 +428,7 @@ const seedFAQs = async () => {
                 "question": "Who is the HOD of BBA?",
                 "answer": "The Head of the BBA department  is  Mrs. Ritika Desai Tiwari.",
                 "category": "hod",
-                "keywords": ["hod", "bba", "business administration", "ritika desai tiwari", "head of department", "faculty"],
+                "keywords": ["hod", "bba", "business administration", "head of department"],
                 "alternateQuestions": [
                     "BBA department ka head kaun hai?",
                     "Who is the head of BBA?",
@@ -441,7 +441,7 @@ const seedFAQs = async () => {
                 "question": "Who is the HOD of MBA?",
                 "answer": "The Head of the MBA department is  Mrs. Ritika Desai Tiwari.",
                 "category": "hod",
-                "keywords": ["hod", "mba", "master of business administration", "ritika desai tiwari", "head of department", "faculty"],
+                "keywords": ["hod", "mba", "master of business administration", "head of department"],
                 "alternateQuestions": [
                     "MBA department ka head kaun hai?",
                     "Who is the head of MBA?",
@@ -454,7 +454,7 @@ const seedFAQs = async () => {
                 "question": "Who is the HOD of BCA?",
                 "answer": "The Head of the BCA is department Mrs. Rachita Vyas Dongre.",
                 "category": "hod",
-                "keywords": ["hod", "bca", "bachelor of computer applications", "rachita vyas dongre", "head of department", "faculty"],
+                "keywords": ["hod", "bca", "bachelor of computer applications", "head of department"],
                 "alternateQuestions": [
                     "BCA department ka head kaun hai?",
                     "Who is the head of BCA?",
@@ -468,7 +468,7 @@ const seedFAQs = async () => {
                 "question": "Who is the HOD of MCA?",
                 "answer": "The Head of the MCA department is Mrs. Rachita Vyas Dongre.",
                 "category": "hod",
-                "keywords": ["hod", "mca", "master of computer applications", "rachita vyas dongre", "head of department", "faculty"],
+                "keywords": ["hod", "mca", "master of computer applications", "head of department"],
                 "alternateQuestions": [
                     "MCA department ka head kaun hai?",
                     "Who is the head of MCA?",
@@ -481,7 +481,7 @@ const seedFAQs = async () => {
                 "question": "Who is the HOD of M Tech?",
                 "answer": "The Head of the M Tech department is Mr. L.P. Ladhe.",
                 "category": "hod",
-                "keywords": ["hod", "mtech", "m tech", "l.p. ladhe", "head of department", "faculty"],
+                "keywords": ["hod", "mtech", "m tech",  "head of department"],
                 "alternateQuestions": [
                     "M Tech ke head kaun hai",
                     "M Tech department ke head kon hai",
@@ -492,7 +492,7 @@ const seedFAQs = async () => {
                 "question": "Who is the subordinate of M Tech?",
                 "answer": "The subcordinate of the M Tech department is Mr. Sanidhya Nagar.",
                 "category": "hod",
-                "keywords": ["subordinate", "mtech", "m tech", "sanidhya nagar", "faculty"],
+                "keywords": ["subordinate", "mtech", "m tech"],
                 "alternateQuestions": [
                     "M Tech ka subordinate kaun hai",
                     "Who is the subordinate of M Tech",
@@ -607,7 +607,7 @@ const seedFAQs = async () => {
             },
             {
                 "question": "Where is the Computer Science & Engineering  Department?",
-                "answer": "Go straight to stairs and turn right at room number .",
+                "answer": "Go straight to stairs and turn right at room number 207.",
                 "category": "department_location",
                 "keywords": ["Computer science department", "cse location"],
                 "alternateQuestions": [
@@ -630,8 +630,8 @@ const seedFAQs = async () => {
                 ],
             },
             {
-                "question": "Where is the computer lab ?",
-                "answer": " Go straight through stairs and turn right at Room Number     .",
+                "question": "Where is the computer lab?",
+                "answer": " Go straight through stairs and turn right at Room Number 201    .",
                 "category": "department_location",
                 "keywords": ["computer lab", "computer lab location"],
                 "alternateQuestions": [
@@ -664,6 +664,95 @@ const seedFAQs = async () => {
                     "How to reach English lab?"
                 ]
             },
+            {
+                "question":"Where is MCA Department?",
+                "answer":"Come out of the college building and turn right from the garden side. The MCA department is located behind the college.",
+                "category": "department_location",
+                "keywords": ["mca department", "mca location"],
+                "alternateQuestions": [
+                    "MCA department kaha hai?",
+                    "MCA engineering location?",
+                    "How to reach MCA department?"
+                ]
+            },
+             {
+                "question":"Where is BCA Department?",
+                "answer":"Come out of the college buiding and turn right from the garden side. The BCA department is located behind the college.",
+                "category": "department_location",
+                "keywords": ["bca department", "bca location"],
+                "alternateQuestions": [
+                    "BCA department kaha hai?",
+                    "BCA engineering location?",
+                    "How to reach BCA department?"
+                ]
+            },
+              {
+                "question":"Where is BBA Department?",
+                "answer":"BBA Department is located on the 3rd floor. ",
+                "category": "department_location",
+                "keywords": ["bba department", "bba location"],
+                "alternateQuestions": [
+                    "BBA department kaha hai?",
+                    "BBA engineering location?",
+                    "How to reach BBA department?"
+                ]
+            },
+            {
+                "question":"Where is MBA Department?",
+                "answer":"MBA Department is located on the 3rd floor. ",
+                "category": "department_location",
+                "keywords": ["mba department", "mba location"],
+                "alternateQuestions": [
+                    "MBA department kaha hai?",
+                    "MBA engineering location?",
+                    "How to reach MBA department?"
+                ]
+            },
+            {
+                "question":"Where is Chemistry Lab?",
+                "answer":"Go straight, then turn left. After that, turn right. The Chemistry Lab is located there in Room No. 104",
+                "category": "general",
+                "keywords": ["chemistry lab", "chemistry lab location"],
+                "alternateQuestions": [
+                    "Chemistry lab kaha hai?",
+                    "Chemistry lab location?",
+                    "How to reach Chemistry lab?"
+                ]
+            },
+            {
+                "question":"Where is Physics Lab?",
+                "answer":"Physics Lab is located on the 2nd floor.",
+                "category": "general",
+                "keywords": ["physics lab", "physics lab location"],
+                "alternateQuestions": [
+                    "Physics lab kaha hai?",
+                    "Physics lab location?",
+                    "How to reach physics lab?"
+                ]
+            },
+              {
+                "question":"Where is Administrative Office?",
+                "answer":"Go straight and  turn left. The Administrative office is located there in Room No. 101",
+                "category": "general",
+                "keywords": ["administrative office", "Administrative office location"],
+                "alternateQuestions": [
+                    "Administrative office   kaha hai?",
+                    "Administrative office location?",
+                    "How to reach Administrative office?"
+                ]
+            },
+            {
+                "question":"Where is PhotoCopy center?",
+                "answer":"Go straight and turn left. The photocopy center is located in front of the Accountant Counter at Room No. 106. ",
+                "category": "general",
+                "keywords": ["photocopy center", "photocopy center location"],
+                "alternateQuestions": [
+                    "photocopy center kaha hai?",
+                    "photocopy center location?",
+                    "How to reach photocopy center?"
+                ]
+            }
+
 
 
         ];
