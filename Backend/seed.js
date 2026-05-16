@@ -362,7 +362,7 @@ const seedFAQs = async () => {
                 "question": "Who is the HOD of Computer Science Engineering (CSE)?",
                 "answer": "The Head of the Computer Science Engineering department is Ankit Bakshi.",
                 "category": "hod",
-                "keywords": ["hod", "cse", "computer science engineering", "computer science", "head of department"],
+                "keywords": ["hod", "head of cse", " hod of computer science engineering", "head of department"],
                 "alternateQuestions": [
                     "Who is the head of CSE department?",
                     "CSE ke department HOD kaun hai?",
@@ -375,7 +375,7 @@ const seedFAQs = async () => {
                 "question": "Who is the HOD of Data Science (DS)?",
                 "answer": "The Head of the Data Science department is Mr. Ankit Bakshi.",
                 "category": "hod",
-                "keywords": ["hod","ds", "data science",  "head of department"],
+                "keywords": ["hod","head of ds", "hod data science",  "head of department"],
                 "alternateQuestions": [
                     "Who is the head of DS department?",
                     "Data Science HOD kaun hai?",
@@ -388,7 +388,7 @@ const seedFAQs = async () => {
                 "question": "Who is the HOD of Mechanical Engineering (ME)?",
                 "answer": "The Head of the Mechanical Engineering department is Mr. L.P. Ladhe.",
                 "category": "hod",
-                "keywords": ["hod", "me", "mechanical engineering", "mechanical",, "head of department"],
+                "keywords": ["hod","head of me","hod of mechanical",  "head of department"],
                 "alternateQuestions": [
                     "Who is the head of Mechanical department?",
                     "Mechanical HOD kaun hai?",
@@ -401,7 +401,7 @@ const seedFAQs = async () => {
                 "question": "Who is the HOD of Civil Engineering (CE)?",
                 "answer": "The Head of the Civil Engineering department is Mr. Ashish Paliwal",
                 "category": "hod",
-                "keywords": ["hod", "ce", "civil engineering", "civil", "head of department"],
+                "keywords": ["hod","hod of ce","head of civil ", "head of department"],
                 "alternateQuestions": [
                     "Who is the head of Civil department?",
                     "Civil HOD kaun hai?",
@@ -414,7 +414,7 @@ const seedFAQs = async () => {
                 "question": "Who is the HOD of Electrical Engineering (EE)?",
                 "answer": "The Head of the Electrical Engineering department is Mr. Ramakant Sukla",
                 "category": "hod",
-                "keywords": ["hod", "ee", "electrical engineering", "electrical", "head of department"],
+                "keywords": ["hod","head of electrical", "hod of ee" , "head of department"],
                 "alternateQuestions": [
                     "Who is the head of Electrical department?",
                     "Electrical ke HOD kaun hai?",
@@ -428,7 +428,7 @@ const seedFAQs = async () => {
                 "question": "Who is the HOD of BBA?",
                 "answer": "The Head of the BBA department  is  Mrs. Ritika Desai Tiwari.",
                 "category": "hod",
-                "keywords": ["hod", "bba", "business administration", "head of department"],
+                "keywords": ["hod","head of bba", "hod of bba","head of department"],
                 "alternateQuestions": [
                     "BBA department ka head kaun hai?",
                     "Who is the head of BBA?",
@@ -441,7 +441,7 @@ const seedFAQs = async () => {
                 "question": "Who is the HOD of MBA?",
                 "answer": "The Head of the MBA department is  Mrs. Ritika Desai Tiwari.",
                 "category": "hod",
-                "keywords": ["hod", "mba", "master of business administration", "head of department"],
+                "keywords": ["hod", "head of mba","hod of mba", "head of department"],
                 "alternateQuestions": [
                     "MBA department ka head kaun hai?",
                     "Who is the head of MBA?",
@@ -454,7 +454,7 @@ const seedFAQs = async () => {
                 "question": "Who is the HOD of BCA?",
                 "answer": "The Head of the BCA is department Mrs. Rachita Vyas Dongre.",
                 "category": "hod",
-                "keywords": ["hod", "bca", "bachelor of computer applications", "head of department"],
+                "keywords": ["hod", "hod of bca", "head of bca", "head of department"],
                 "alternateQuestions": [
                     "BCA department ka head kaun hai?",
                     "Who is the head of BCA?",
@@ -468,7 +468,7 @@ const seedFAQs = async () => {
                 "question": "Who is the HOD of MCA?",
                 "answer": "The Head of the MCA department is Mrs. Rachita Vyas Dongre.",
                 "category": "hod",
-                "keywords": ["hod", "mca", "master of computer applications", "head of department"],
+                "keywords": ["hod", "head of mca", "hod of mca", "head of department"],
                 "alternateQuestions": [
                     "MCA department ka head kaun hai?",
                     "Who is the head of MCA?",
@@ -481,7 +481,7 @@ const seedFAQs = async () => {
                 "question": "Who is the HOD of M Tech?",
                 "answer": "The Head of the M Tech department is Mr. L.P. Ladhe.",
                 "category": "hod",
-                "keywords": ["hod", "mtech", "m tech",  "head of department"],
+                "keywords": ["hod", "head of mtech", "hod of m tech",  "head of department"],
                 "alternateQuestions": [
                     "M Tech ke head kaun hai",
                     "M Tech department ke head kon hai",
@@ -492,7 +492,7 @@ const seedFAQs = async () => {
                 "question": "Who is the subordinate of M Tech?",
                 "answer": "The subcordinate of the M Tech department is Mr. Sanidhya Nagar.",
                 "category": "hod",
-                "keywords": ["subordinate", "mtech", "m tech"],
+                "keywords": ["subordinate", "subordinate of mtech"],
                 "alternateQuestions": [
                     "M Tech ka subordinate kaun hai",
                     "Who is the subordinate of M Tech",

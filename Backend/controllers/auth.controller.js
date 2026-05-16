@@ -60,8 +60,16 @@ return res.status(200).json({success: true, message:"Login successful", user: ex
     
 }
 
-export const logout = (req, res) => {
+export const logout = async (req, res) => {
     try{
+    if (req.userId) {
+        // UX Improvement: Resetting premium status and clearing history 
+        // so the user gets a fresh start the next morning.
+        await User.findByIdAndUpdate(req.userId, { 
+            isPremium: false,
+            history: [] // Clear the 50 questions for a fresh start the next day
+        });
+    }
     res.clearCookie('token');
    return  res.status(200).json({success: true, message:"Logout successful"});
     }

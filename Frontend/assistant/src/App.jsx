@@ -9,11 +9,36 @@ import PageNotFound from './pages/PageNotFound'
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import History from './component/History'
-
+import Desktop from './pages/Desktop'
+import { useEffect,useState } from 'react'
+import AdminPanel from './pages/AdminPanel'
+import AdminLogin from './pages/AdminLogin'
 const App = () => {
   const {userData,setUserData}=useContext(userDataContext);
    
+ const [isMobile, setIsMobile] = useState(false);
 
+  useEffect(() => {
+    const checkDevice = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkDevice();
+
+    window.addEventListener("resize", checkDevice);
+
+    return () => {
+      window.removeEventListener("resize", checkDevice);
+    };
+  }, []);
+
+  // Mobile Block Screen
+  if (isMobile) {
+    return (
+    <Desktop/>
+    );
+  
+  }
     return (
       <>
       <ToastContainer
@@ -33,7 +58,10 @@ const App = () => {
       <Route path='/register' element={ !userData ? <Register /> : <Navigate to='/' /> } />
       <Route path='*' element={<PageNotFound />} />
       <Route path='/history' element={<History/>}/>
-    </Routes>
+      <Route path='/admin' element={<AdminPanel/>}/>
+      <Route path='/admin-login' element={<AdminLogin/>}/>
+
+    </Routes>a
     </>
   )
 }

@@ -11,7 +11,8 @@ import Footer from '../component/Footer';
 import sditslogo from '../assets/sditslogo.png'
 import { MdHistory } from "react-icons/md";
 import { FiLogOut } from "react-icons/fi";
-import { MdOutlineCreditScore } from "react-icons/md";
+import backgroundImage from '../assets/purplebg.png'
+import { ShieldUser } from 'lucide-react';
 
 const Home = () => {
 
@@ -23,7 +24,7 @@ const Home = () => {
   const recognitionRef = useRef(null);
   const isRecognizingRef = useRef(false);
   const sythesis = window.speechSynthesis;
-  const isSpeakingRef = useRef(false);
+  const isSpeakingRef = useRef(false); // This ref is used to track if the assistant is speaking
   const [userText, setUserText] = useState("");
   const [aiText, setAiText] = useState("");
   const [toggleMenu, setToggleMenu] = useState(false);
@@ -31,7 +32,8 @@ const Home = () => {
   const [preferredModel, setPreferredModel] = useState("Gemini");
   const [showPayButton, setShowPayButton] = useState(false);
   const [isPaying, setIsPaying] = useState(false);
-
+  const [aiErrorOccurred, setAiErrorOccurred] = useState(false); // New state to track AI errors
+  
   // Fix closure bug: Speech recognition needs to know the current model without restarting the effect
   const preferredModelRef = useRef(preferredModel);
   useEffect(() => {
@@ -41,7 +43,10 @@ const Home = () => {
 
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
+      if (window.Razorpay) return resolve(true);
       const script = document.createElement("script");
+      script.async = true;
+      script.crossOrigin = "anonymous";
       script.src = "https://checkout.razorpay.com/v1/checkout.js";
       script.onload = () => resolve(true);
       script.onerror = () => resolve(false);
@@ -96,38 +101,35 @@ const Home = () => {
 
   // Effect to manage showPayButton based on premium status
   useEffect(() => {
-    // Show button if not premium and they have used at least one question (or always if preferred)
-    if (userData && !userData.user.isPremium && userData.user.history.length >= 20) {
-      setShowPayButton(true);
+    if (userData && !userData.user.isPremium) {
+      // Show button if not premium and (history limit of 50 reached OR an AI error occurred)
+      if (userData.user.history.length >= 50 || aiErrorOccurred) {
+        setShowPayButton(true);
+      } else {
+        setShowPayButton(false);
+      }
     } else {
+      // If user is premium, we hide the button. 
+      // We only reset aiErrorOccurred if they are premium to allow them to retry
+      // or if they just finished paying.
       setShowPayButton(false);
+      setAiErrorOccurred(false);
     }
-  }, [userData]);
+  }, [userData, aiErrorOccurred]); // Add aiErrorOccurred to dependencies
 
   const handleModelFailure = (error) => {
-    const errorMessage = error?.response?.data?.message || "An unexpected error occurred.";
+    const errorMessage = error?.response?.data?.message || error?.message || "An unexpected error occurred.";
     if (!userData?.user?.isPremium) {
-      setShowPayButton(true);
-      const msg = errorMessage.includes("limit") ? errorMessage : `${preferredModel} is currently overloaded. Please Buy Credits to switch engines.`;
+      setAiErrorOccurred(true); // Set the flag when an AI error occurs for non-premium users
+      const msg = errorMessage.includes("limit") || errorMessage.includes("unavailable") 
+        ? "Gemini limit reached. Please Upgrade to Premium to switch to backup engines." 
+        : `${preferredModelRef.current} is currently busy. Upgrade to unlock backup models.`;
       if (!isSpeakingRef.current) speak(msg); // Only speak if not already speaking
       setAiText(msg);
     } else {
-      // Premium cycling logic: Gemini -> Groq -> Mistral
-      let current = preferredModel;
-      let next = "";
-      if (preferredModel === "Gemini") {
-        next = "Groq";
-      } else if (preferredModel === "Groq") {
-        next = "Mistral";
-      } else {
-        next = "Gemini";
-      }
-
-      const switchMsg = `${current} is not responding. Switching to ${next}...`;
-      toast.info(switchMsg);
-      if (!isSpeakingRef.current) speak(switchMsg);
-      setAiText(switchMsg);
-      setPreferredModel(next);
+      const msg = "All AI engines (Gemini, Groq, Mistral) are currently unavailable. Please try again later.";
+      if (!isSpeakingRef.current) speak(msg);
+      setAiText(msg);
     }
   };
 
@@ -191,11 +193,13 @@ const Home = () => {
       isProcessingRef.current = false; // Ensure processing flag is reset
       setIsProcessing(false); // Ensure processing state is reset
       // Restart recognition so the assistant starts listening for the next question
-      if (recognitionRef.current && !isRecognizingRef.current) {
+      if (recognitionRef.current && !isRecognizingRef.current && !isProcessingRef.current) {
         try {
           recognitionRef.current.start();
         } catch (error) {
-          console.error("Speech Recognition Restart Error:", error);
+          if (error.name !== "InvalidStateError") {
+            console.error("Speech Recognition Restart Error:", error);
+          }
         }
       }
       console.log("Speech finished");
@@ -246,7 +250,7 @@ const Home = () => {
         if (!isMounted) return;
         isRecognizingRef.current = false;
         setListening(false)
-        if (isMounted && !isSpeakingRef.current && !isProcessingRef.current) {
+        if (isMounted && !isSpeakingRef.current && !isProcessingRef.current && !isRecognizingRef.current) {
           setTimeout(() => {
             if (isMounted) {
               try {
@@ -289,11 +293,19 @@ const Home = () => {
 
 
         if (transcript.toLowerCase().includes(userData.user.assistantName.toLowerCase())) {
+          // BLOCK: If limit is hit and user hasn't paid, don't hit the backend
+          if (aiErrorOccurred && !userData.user.isPremium) {
+            const msg = "Question limit reached. Please use the Upgrade button to continue our conversation.";
+            if (!isSpeakingRef.current) speak(msg);
+            setAiText(msg);
+            return;
+          }
+
           console.log("Wake word detected! Calling Gemini...");
           try {
             setAiText("")
             setUserText(transcript)
-            recognition.stop(); // Stop recognition while processing the command
+            recognition.abort(); // Use abort for immediate stop when wake word is detected
             isRecognizingRef.current = false;
             setListening(false);
             isProcessingRef.current = true;
@@ -301,15 +313,6 @@ const Home = () => {
             const data = await askAssistant(transcript, preferredModelRef.current);
 
             console.log("Gemini Response:", data);
-
-            if (data.message === "Token not found" || data.success === false && data.message?.includes("Token")) {
-              toast.error("Session expired. Please login again.");
-              setUserData(null);
-              isProcessingRef.current = false;
-              setIsProcessing(false);
-              navigate('/login');
-              return;
-            }
 
             if (data.success) {
               if (data.user) {
@@ -320,6 +323,11 @@ const Home = () => {
               isProcessingRef.current = false;
               setAiText(data.response);
               setUserText("");
+              // NEW: Update preferredModel if it was changed by the backend
+              if (data.preferredModel && data.preferredModel !== preferredModelRef.current) {
+                setPreferredModel(data.preferredModel);
+              }
+              setAiErrorOccurred(false); // Reset AI error flag on successful response
             }
             else {
               setIsProcessing(false);
@@ -328,6 +336,9 @@ const Home = () => {
               // If it's a limit or premium error, trigger the failure handler UI
               if (data.message.includes("limit") || data.message.includes("premium")) {
                 handleModelFailure({ response: { data: { message: data.message } } });
+              } else if (!userData?.user?.isPremium) {
+                // For any other AI error for non-premium users, also show the button
+                setAiErrorOccurred(true);
               } else {
                 speak(data.message || "Sorry, I couldn't process that.");
                 setAiText(data.message || "Sorry, I couldn't process that.");
@@ -366,12 +377,15 @@ const Home = () => {
     }
   }, []);
   return (
-    <div className='w-full relative overflow-x-hidden flex justify-center items-center flex-col min-h-screen bg-gradient-to-t from-[#38383c] py-8 to-[#5351e1]  px-4'>
+    <div className='w-full relative overflow-x-hidden flex justify-center items-center flex-col min-h-screen bg-cover opacity-100 px-4'  style={{ backgroundImage: `url(${backgroundImage})` }} >
       <CgMenuRight className={`lg:hidden text-white absolute top-[20px] right-[20px] w-[30px] h-[30px] cursor-pointer z-20`} onClick={() => setToggleMenu(true)} />
       <div className={`absolute top-0 left-0 w-full h-full bg-[#575770bd] backdrop-blur-md p-[30px] flex flex-col gap-6 item-start ${toggleMenu ? "translate-x-0" : "translate-x-full"} transition-transform lg:hidden z-50`}>
         <RxCross2 className='cursor-pointer  lg:hidden text-white absolute top-[20px] right-[20px] w-[30px] h-[30px]' onClick={() => setToggleMenu(false)} />
         <button onClick={handleLogout} className='w-full max-w-[300px] mx-auto text-white px-5 py-3 rounded-full shadow-lg font-semibold border border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all flex items-center justify-center gap-2'>
          Logout <FiLogOut size={16} /> 
+        </button>
+         <button className='w-full max-w-[300px] mx-auto text-white px-5 py-3 rounded-full shadow-lg font-semibold border border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all flex items-center justify-center gap-2'>
+         Admin <ShieldUser size={16} /> 
         </button>
         {showPayButton && !userData?.user?.isPremium && (
           <button onClick={handleUpgradeAndSwitch} disabled={isPaying} className='w-full max-w-[300px] mx-auto text-white px-5 py-3 rounded-full shadow-xl font-bold bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-400 hover:to-orange-500 transition-all cursor-pointer mt-4 border border-white/30 flex items-center justify-center gap-2'>
@@ -406,18 +420,20 @@ const Home = () => {
         <button onClick={() => navigate('/history')} className='min-w-[130px] text-white px-6 py-2.5 rounded-full shadow-lg font-bold border border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/20 hover:scale-105 transition-all duration-200 cursor-pointer flex items-center gap-2'>
          History <MdHistory size={18} /> 
         </button>
+        {showPayButton && !userData?.user?.isPremium && (
+          <button onClick={handleUpgradeAndSwitch} disabled={isPaying} className='min-w-[220px] text-white px-6 py-2.5 rounded-full shadow-[0_0_15px_rgba(234,179,8,0.3)] font-bold bg-gradient-to-r from-yellow-300 to-orange-400 hover:shadow-[0_0_20px_rgba(234,179,8,0.5)] hover:scale-105 transition-all duration-200 cursor-pointer border border-white/30 flex items-center justify-center gap-2'>
+            {isPaying ? "Processing..." :"Upgrade to Premium "}
+          </button>
+        )}
+          <button  className='min-w-[130px] text-white px-6 py-2.5 rounded-full shadow-lg font-bold border border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/20 hover:scale-105 transition-all duration-200 cursor-pointer flex items-center gap-2'>
+          Admin <ShieldUser size={16} />
+        </button>
         <button onClick={handleLogout} className='min-w-[130px] text-white px-6 py-2.5 rounded-full shadow-lg font-bold border border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/20 hover:scale-105 transition-all duration-200 cursor-pointer flex items-center gap-2'>
           Logout <FiLogOut size={16} />
         </button>
       </div>
 
-      {showPayButton && !userData?.user?.isPremium && (
-        <div className='fixed bottom-10 right-4 lg:right-10 z-[60]'>
-            <button onClick={handleUpgradeAndSwitch} disabled={isPaying}  className='min-w-[220px] text-white px-8 py-4 rounded-full shadow-[0_0_20px_rgba(234,179,8,0.4)] font-bold bg-gradient-to-r from-yellow-500 via-orange-500 to-yellow-600 hover:shadow-[0_0_30px_rgba(234,179,8,0.6)] hover:scale-110 active:scale-95 transition-all duration-300 cursor-pointer border border-white/30 flex items-center justify-center gap-2'>
-               {isPaying ? "Processing..." : <><span className="animate-pulse text-xl">✨</span> UPGRADE TO PREMIUM</>}
-            </button>
-        </div>
-      )}
+  
 
       <div className=' text-center'>
         <h1 className='text-gray-50 text-xl lg:text-4xl font-bold'>Smart College <span className='text-cyan-400'>AI Assistant</span></h1>
@@ -432,11 +448,9 @@ const Home = () => {
         <div className='w-[180px] h-[180px] lg:w-[210px] lg:h-[210px] rounded-full overflow-hidden shadow-2xl border-4 border-white/10 z-10 bg-black/20'>
           <img src={sditslogo} alt="assistant" className='h-full w-full object-fit' />
         </div>
-
-
       </div>
       <h1 className='text-gray-300 text-[14px] py-9 text-center font-semibold'>
-        <span className='text-cyan-400 text-[18px] font-bold'>Meet {userData?.user?.assistantName}! </span>Ask me anything about college
+        <span className='text-cyan-400 text-[18px] font-bold'>Meet {userData?.user?.assistantName}!</span> Ask me anything about college
       </h1>
 
       <div className='flex flex-col items-center bg-transparent '>
@@ -454,8 +468,6 @@ const Home = () => {
                 : userText || null
           }
         </h1>
-      </div>
-      <div className='absolute top-2 right-100'>
       </div>
       <Footer />
     </div>

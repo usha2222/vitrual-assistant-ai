@@ -66,29 +66,7 @@ export const askToAssistant = async (req, res) => {
             });
         }
 
-        // First, search in MongoDB FAQ - Unlimited access without checking premium
-        const faqResult = await searchFAQ(cleanedCommand);
-        if (faqResult) {
-            return res.json({
-                success: true,
-                user: user, 
-                type: "general",
-                userInput: cleanedCommand,
-                response: faqResult.answer
-            });
-        }
-
-        // 1. Check for manual model switching (Premium Feature) - Only for AI requests
-        if (preferredModel && preferredModel.toLowerCase() !== "gemini" && !user.isPremium) {
-            return res.status(403).json({ success: false, message: "Manual model switching is a premium feature. Please upgrade to unlock." });
-        }
-
-        // 2. Limit free users to 20 questions - Only for AI requests (not found in FAQ)
-        if (!user.isPremium && user.history.length >= 20) {
-            return res.status(403).json({ success: false, message: "You have reached the free limit of 20 questions. Please upgrade to Premium to continue." });
-        }
-
-        const fullPrompt = `You are ${assistantName}, a voice-enabled virtual assistant for S.D.I.T.S. College. I can help you  to find answers to your questions related to the college, such as admissions, fees, courses, and placements..
+        const fullPrompt = `You are ${assistantName}, a voice-enabled virtual assistant for S.D.I.T.S. College. I can help you to find answers to your questions related to the college, such as admissions, fees, courses, and placements..
       
                     You are not a Google. You will now behave like a voice-enabled virtual assistant.
                     STRICT RULES:
@@ -127,18 +105,80 @@ export const askToAssistant = async (req, res) => {
             -Only respond with the JSON object ,nothing else
             now your userInput-${cleanedCommand}`;
 
-        const result = await getAssistantResponse(fullPrompt, preferredModel);
+        // First, search in MongoDB FAQ - Unlimited access without checking premium
+        const faqResult = await searchFAQ(cleanedCommand);
+        if (faqResult) {
+            return res.json({
+                success: true,
+                user: user, 
+                type: "general",
+                userInput: cleanedCommand,
+                response: faqResult.answer
+            });
+        }
+
+        // --- AI Request Logic ---
+        let aiResponseResult;
+        let finalPreferredModel = preferredModel || "Gemini"; // Start with requested or default
+        const models = ["Gemini", "Groq", "Mistral"];
+        let modelSwitchAttempts = 0;
+        let currentModelIndex = models.indexOf(finalPreferredModel);
+        if (currentModelIndex === -1) { // Fallback if preferredModel is invalid or not found in models list
+            currentModelIndex = 0;
+            finalPreferredModel = models[0];
+        }
+
+        while (modelSwitchAttempts < models.length) {
+            try {
+                // Check if the current model is a premium model for a non-premium user
+                if (finalPreferredModel.toLowerCase() !== "gemini" && !user.isPremium) {
+                    return res.status(403).json({ success: false, message: "Manual model switching is a premium feature. Please upgrade to unlock." });
+                }
+
+                // Gemini Question Limit Check for Free Users
+                if (!user.isPremium && user.history.length >= 50) {
+                    return res.status(403).json({ success: false, message: "You have reached your daily limit of 50 free questions. Please upgrade to Premium to switch to backup engines." });
+                }
+                aiResponseResult = await getAssistantResponse(fullPrompt, finalPreferredModel);
+                break; // If successful, break the loop
+
+            } catch (aiError) {
+                console.error(`AI Service (${finalPreferredModel}) failed:`, aiError.message);
+
+                if (!user.isPremium) {
+                    // Non-premium user: AI failed, tell them to upgrade
+                    return res.status(403).json({ success: false, message: `AI service (${finalPreferredModel}) is currently unavailable. Please upgrade to Premium to try other engines or contact support.` });
+                }
+
+                // Premium user: try to switch models
+                modelSwitchAttempts++;
+                if (modelSwitchAttempts < models.length) {
+                    currentModelIndex = (currentModelIndex + 1) % models.length;
+                    finalPreferredModel = models[currentModelIndex];
+                    console.log(`Attempting to switch to ${finalPreferredModel} due to failure.`);
+                    // The frontend will receive the new preferredModel in the successful response
+                    // or a 500 if all models fail.
+                } else {
+                    // All models failed for premium user
+                    return res.status(500).json({ success: false, message: "All AI services are currently unavailable. Please try again later.", error: aiError.message });
+                }
+            }
+        }
+
+        // If loop finishes without a successful response (e.g., all models failed for premium user)
+        if (!aiResponseResult) {
+            return res.status(500).json({ success: false, message: "Failed to get a response from any AI service." });
+        }
 
         // Save to history only after a successful AI response to protect user credits
         user.history.push(command);
         await user.save();
 
-        const jsonMatch = result.match(/{[\s\S]*}/);
+        const jsonMatch = aiResponseResult.match(/{[\s\S]*}/);
         if (!jsonMatch) {
             return res.status(400).json({ success: false, message: "AI response was not in the expected JSON format." });
         }
 
-        //COnvert the string into JSON format
         let gemResult;
         try {
             console.log("AI Raw Response (extracted JSON part):", jsonMatch[0]);
@@ -157,6 +197,7 @@ export const askToAssistant = async (req, res) => {
                     type: type,
                     userInput: gemResult.userInput,
                     response: `Current date is ${moment().format('YYYY-MM-DD')}`,
+                    preferredModel: finalPreferredModel
                 });
             case 'get_time':
                 return res.json({
@@ -165,6 +206,7 @@ export const askToAssistant = async (req, res) => {
                     type: type,
                     userInput: gemResult.userInput,
                     response: `Current time is ${moment().format('hh:mm:A')}`,
+                    preferredModel: finalPreferredModel
                 });
             case 'get_month':
                 return res.json({
@@ -173,6 +215,7 @@ export const askToAssistant = async (req, res) => {
                     type: type,
                     userInput: gemResult.userInput,
                     response: `Current month is ${moment().format('MMMM')}`,
+                    preferredModel: finalPreferredModel
                 });
             case 'get_day':
                 return res.json({
@@ -181,6 +224,7 @@ export const askToAssistant = async (req, res) => {
                     type: type,
                     userInput: gemResult.userInput,
                     response: `Current day is ${moment().format('dddd')}`,
+                    preferredModel: finalPreferredModel
                 });
 
             default:
@@ -190,6 +234,7 @@ export const askToAssistant = async (req, res) => {
                     type: gemResult.type || "general",
                     userInput: gemResult.userInput,
                     response: gemResult.response || "I processed your request, but I'm not sure what to say.",
+                    preferredModel: finalPreferredModel
                 });
         }
     }
