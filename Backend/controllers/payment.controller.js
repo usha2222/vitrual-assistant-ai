@@ -42,6 +42,11 @@ export const verifyPayment = async (req, res) => {
     try {
         const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
 
+        // Check if userId is coming through (CORS/Cookie check)
+        if (!req.userId) {
+            return res.status(401).json({ success: false, message: "Authentication failed. User ID not found in request." });
+        }
+
         if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
             return res.status(400).json({ success: false, message: "Missing Razorpay payment details." });
         }
@@ -53,9 +58,16 @@ export const verifyPayment = async (req, res) => {
             .digest("hex");
 
         if (razorpay_signature === expectedSign) {
-            // Payment is successful, update user to premium
-            // Ensure req.userId is set by your isAuthenticated middleware
-            const updatedUser = await User.findByIdAndUpdate(req.userId, { isPremium: true }, { new: true }).select("-password");
+            console.log("Payment Signature Verified for User:", req.userId);
+            const updatedUser = await User.findByIdAndUpdate(
+                req.userId, 
+                { isPremium: true }, 
+                { new: true }
+            ).select("-password");
+
+            if (!updatedUser) {
+                return res.status(404).json({ success: false, message: "User not found in cloud database." });
+            }
 
             return res.json({
                 success: true,

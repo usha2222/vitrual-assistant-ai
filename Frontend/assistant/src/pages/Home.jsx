@@ -384,7 +384,7 @@ const Home = () => {
         <button onClick={handleLogout} className='w-full max-w-[300px] mx-auto text-white px-5 py-3 rounded-full shadow-lg font-semibold border border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all flex items-center justify-center gap-2'>
          Logout <FiLogOut size={16} /> 
         </button>
-         <button className='w-full max-w-[300px] mx-auto text-white px-5 py-3 rounded-full shadow-lg font-semibold border border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all flex items-center justify-center gap-2'>
+         <button onClick={()=>navigate("/admin")} className='w-full max-w-[300px] mx-auto text-white px-5 py-3 rounded-full shadow-lg font-semibold border border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all flex items-center justify-center gap-2'>
          Admin <ShieldUser size={16} /> 
         </button>
         {showPayButton && !userData?.user?.isPremium && (
@@ -425,7 +425,7 @@ const Home = () => {
             {isPaying ? "Processing..." :"Upgrade to Premium "}
           </button>
         )}
-          <button  className='min-w-[130px] text-white px-6 py-2.5 rounded-full shadow-lg font-bold border border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/20 hover:scale-105 transition-all duration-200 cursor-pointer flex items-center gap-2'>
+          <button onClick={() => navigate('/admin')} className='min-w-[130px] text-white px-6 py-2.5 rounded-full shadow-lg font-bold border border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/20 hover:scale-105 transition-all duration-200 cursor-pointer flex items-center gap-2'>
           Admin <ShieldUser size={16} />
         </button>
         <button onClick={handleLogout} className='min-w-[130px] text-white px-6 py-2.5 rounded-full shadow-lg font-bold border border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/20 hover:scale-105 transition-all duration-200 cursor-pointer flex items-center gap-2'>

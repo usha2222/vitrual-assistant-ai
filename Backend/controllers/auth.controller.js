@@ -17,7 +17,8 @@ const hashedPassword=await bcrypt.hash(password,10);
 const user=await User.create({
     name,
     email,
-    password:hashedPassword});
+    password:hashedPassword,
+    isPremium: false }); // रजिस्ट्रेशन के समय इसे साफ तौर पर लिखें
     const token=await getToken(user._id);
     res.cookie('token', token, {
         httpOnly: true,
@@ -44,7 +45,13 @@ const isMatch=await bcrypt.compare(password, existingEmail.password);
 if(!isMatch){
     return res.status(400).json({success: false, message:"Invalid password!"});
 }
-const token=await getToken(existingEmail._id);
+
+if (existingEmail.isPremium === undefined) {
+    existingEmail.isPremium = false;
+    await existingEmail.save();
+}
+
+const token = await getToken(existingEmail._id);
 res.cookie('token', token, {
     httpOnly: true,
     secure: true,

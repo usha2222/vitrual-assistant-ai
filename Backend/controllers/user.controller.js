@@ -11,7 +11,7 @@ export const getCurrentUser = async (req, res) => {
 
             return res.status(400).json({ success: false, message: "User not found" })
         }
-        console.log(user);
+        console.log("Cloud User Data Fetch:", { id: user._id, isPremium: user.isPremium });
         return res.status(200).json({ success: true, user })
 
     } catch (error) {
