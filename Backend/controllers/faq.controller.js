@@ -1,46 +1,94 @@
-import FAQ from "../models/faq.model.js";
+import FAQ from '../models/faq.model.js'; // Assuming you have an FAQ model
 
+// Helper function to normalize category from frontend
+const normalizeCategory = (category) => {
+    // Ensure category is lowercase and handle common variations if needed
+    return category ? category.toLowerCase() : 'general';
+};
+
+// Add a new FAQ
 export const addFAQ = async (req, res) => {
     try {
         const { question, answer, category, keywords, alternateQuestions } = req.body;
-        const normalizedKeywords = Array.isArray(keywords)
-            ? keywords.map((kw) => String(kw).trim()).filter(Boolean)
-            : typeof keywords === 'string'
-                ? keywords.split(',').map((kw) => kw.trim()).filter(Boolean)
-                : [];
 
-        const normalizedAltQuestions = Array.isArray(alternateQuestions)
-            ? alternateQuestions.map((q) => String(q).trim()).filter(Boolean)
-            : typeof alternateQuestions === 'string'
-                ? alternateQuestions.split('|').map((q) => q.trim()).filter(Boolean)
-                : [];
+        if (!question || !answer) {
+            return res.status(400).json({ success: false, message: "Question and Answer are required." });
+        }
 
-        const faq = new FAQ({ 
-            question, 
-            answer, 
-            category, 
-            keywords: normalizedKeywords,
-            alternateQuestions: normalizedAltQuestions 
+        const newFAQ = new FAQ({
+            question,
+            answer,
+            category: normalizeCategory(category),
+            keywords: keywords ? keywords.split(',').map(k => k.trim()) : [],
+            alternateQuestions: alternateQuestions ? alternateQuestions.split('|').map(q => q.trim()) : [],
         });
-        await faq.save();
-        res.status(201).json({ success: true, message: "FAQ added successfully", faq });
+
+        await newFAQ.save();
+        res.status(201).json({ success: true, message: "FAQ added successfully.", faq: newFAQ });
     } catch (error) {
-        res.status(400).json({ success: false, message: error.message });
+        console.error("Error adding FAQ:", error);
+        res.status(500).json({ success: false, message: "Internal server error." });
     }
 };
 
+// Get all FAQs
 export const getFAQs = async (req, res) => {
     try {
         const faqs = await FAQ.find();
         res.status(200).json({ success: true, faqs });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        console.error("Error fetching FAQs:", error);
+        res.status(500).json({ success: false, message: "Internal server error." });
     }
 };
 
+// Update an existing FAQ
+export const updateFAQ = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { question, answer, category, keywords, alternateQuestions } = req.body;
+
+        const updatedFAQ = await FAQ.findByIdAndUpdate(
+            id,
+            {
+                question,
+                answer,
+                category: normalizeCategory(category),
+                keywords: keywords ? keywords.split(',').map(k => k.trim()) : [],
+                alternateQuestions: alternateQuestions ? alternateQuestions.split('|').map(q => q.trim()) : [],
+            },
+            { new: true, runValidators: true } // Return the updated document and run schema validators
+        );
+
+        if (!updatedFAQ) {
+            return res.status(404).json({ success: false, message: "FAQ not found." });
+        }
+
+        res.status(200).json({ success: true, message: "FAQ updated successfully.", faq: updatedFAQ });
+    } catch (error) {
+        console.error("Error updating FAQ:", error);
+        res.status(500).json({ success: false, message: "Internal server error." });
+    }
+};
+
+// Delete an FAQ
+export const deleteFAQ = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const deletedFAQ = await FAQ.findByIdAndDelete(id);
+
+        if (!deletedFAQ) {
+            return res.status(404).json({ success: false, message: "FAQ not found." });
+        }
+
+        res.status(200).json({ success: true, message: "FAQ deleted successfully." });
+    } catch (error) {
+        console.error("Error deleting FAQ:", error);
+        res.status(500).json({ success: false, message: "Internal server error." });
+    }
+};
 
 const STOP_WORDS = new Set(['what', 'who', 'is', 'are', 'the', 'how', 'where', 'when', 'you', 'your', 'me', 'tell', 'about', 'can', 'please', 'was', 'were', 'which', 'from', 'this', 'that', 'with', 'for', 'and', 'my', 'do', 'does']);
-
 export const searchFAQ = async (query) => {
     try {
         const queryLower = query.toLowerCase().trim();
@@ -105,3 +153,6 @@ export const searchFAQ = async (query) => {
         return null;
     }
 };
+
+
+export default { addFAQ, getFAQs, updateFAQ, deleteFAQ };

@@ -218,7 +218,7 @@ const seedFAQs = async () => {
                 "question": "When are exams conducted at SDITS?",
                 "answer": "Odd semester examinations are conducted in December-January and even semester examinations in May-June by RGPV Bhopal as per academic calendar.",
                 "category": "academics",
-                "keywords": ["when", "exam dates", "semester exam", "Dec Jan", "May June", "RGPV exam", "academic calendar"],
+                "keywords": ["when", "exam dates", "Dec Jan", "May June", "RGPV exam", "academic calendar"],
                 "alternateQuestions": ["RGPV exam timing.", "Semester exam schedule."]
             },
             {

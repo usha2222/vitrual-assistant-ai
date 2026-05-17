@@ -136,8 +136,8 @@ export const askToAssistant = async (req, res) => {
                 }
 
                 // Gemini Question Limit Check for Free Users
-                if (!user.isPremium && user.history.length >= 50) {
-                    return res.status(403).json({ success: false, message: "You have reached your daily limit of 50 free questions. Please upgrade to Premium to switch to backup engines." });
+                if (!user.isPremium && user.history.length >= 10) {
+                    return res.status(403).json({ success: false, message: "You have reached your daily limit of 10 free questions. Please upgrade to Premium to switch to backup engines." });
                 }
                 aiResponseResult = await getAssistantResponse(fullPrompt, finalPreferredModel);
                 break; // If successful, break the loop

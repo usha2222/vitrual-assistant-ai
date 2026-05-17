@@ -61,7 +61,7 @@ const App = () => {
       <Route path='/admin' element={<AdminPanel/>}/>
       <Route path='/admin-login' element={<AdminLogin/>}/>
 
-    </Routes>a
+    </Routes>
     </>
   )
 }

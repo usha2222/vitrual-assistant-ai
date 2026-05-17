@@ -13,6 +13,7 @@ import { MdHistory } from "react-icons/md";
 import { FiLogOut } from "react-icons/fi";
 import backgroundImage from '../assets/purplebg.png'
 import { ShieldUser } from 'lucide-react';
+import headerlogo from '../assets/header.png'
 
 const Home = () => {
 
@@ -102,8 +103,8 @@ const Home = () => {
   // Effect to manage showPayButton based on premium status
   useEffect(() => {
     if (userData && !userData.user.isPremium) {
-      // Show button if not premium and (history limit of 50 reached OR an AI error occurred)
-      if (userData.user.history.length >= 50 || aiErrorOccurred) {
+      // Show button if not premium and (history limit of 10 reached OR an AI error occurred)
+      if (userData.user.history.length >= 10 || aiErrorOccurred) {
         setShowPayButton(true);
       } else {
         setShowPayButton(false);
@@ -181,7 +182,7 @@ const Home = () => {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'en-US'; // Set language to English
     const voices = sythesis.getVoices();
-    const preferredVoice = voices.find(voice => voice.lang === 'en-US' || voice.lang.startsWith('en'));
+    const preferredVoice = voices.find(voice => voice.lang === 'en-IN' || voice.lang.startsWith('en'));
     if (preferredVoice) {
       utterance.voice = preferredVoice;
     }
@@ -416,7 +417,11 @@ const Home = () => {
         </div>
       </div>
 
-      <div className='absolute hidden lg:flex items-center gap-4 top-8 right-10 z-40'>
+      <div className='absolute hidden lg:flex items-center justify-between w-[95%] top-1 z-40'>
+        <div className='flex items-center ml-4 cursor-pointer'>
+          <img src={headerlogo} alt="header-logo" className='h-30 object-contain hover:scale-110 transition-transform duration-300' />
+        </div>
+        <div className='flex items-center gap-4'>
         <button onClick={() => navigate('/history')} className='min-w-[130px] text-white px-6 py-2.5 rounded-full shadow-lg font-bold border border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/20 hover:scale-105 transition-all duration-200 cursor-pointer flex items-center gap-2'>
          History <MdHistory size={18} /> 
         </button>
@@ -425,12 +430,13 @@ const Home = () => {
             {isPaying ? "Processing..." :"Upgrade to Premium "}
           </button>
         )}
-          <button onClick={() => navigate('/admin')} className='min-w-[130px] text-white px-6 py-2.5 rounded-full shadow-lg font-bold border border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/20 hover:scale-105 transition-all duration-200 cursor-pointer flex items-center gap-2'>
+        <button onClick={() => navigate('/admin')} className='min-w-[130px] text-white px-6 py-2.5 rounded-full shadow-lg font-bold border border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/20 hover:scale-105 transition-all duration-200 cursor-pointer flex items-center gap-2'>
           Admin <ShieldUser size={16} />
         </button>
         <button onClick={handleLogout} className='min-w-[130px] text-white px-6 py-2.5 rounded-full shadow-lg font-bold border border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/20 hover:scale-105 transition-all duration-200 cursor-pointer flex items-center gap-2'>
           Logout <FiLogOut size={16} />
         </button>
+        </div>
       </div>
 
   

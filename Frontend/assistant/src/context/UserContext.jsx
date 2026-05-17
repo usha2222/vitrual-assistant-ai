@@ -2,10 +2,10 @@ import axios from 'axios';
 import { createContext, useCallback, useEffect, useState } from 'react'
 export const userDataContext = createContext();
 const UserContext = ({ children }) => {
-  // const serverUrl='http://localhost:5000/api';
-  const serverUrl = 'https://clg-ai-assistant.onrender.com/api';
+  // const serverUrl = 'http://localhost:5000/api';
+  const serverUrl = 'https://vitrual-clg-assistant-ai.onrender.com/api';
   const [userData, setUserData] = useState(null);
-  const handleCurrentUser =async () => {
+  const handleCurrentUser = async () => {
     try {
       const result = await axios.get(`${serverUrl}/user/current`, { withCredentials: true });
       setUserData(result.data.user ? result.data : null);
@@ -15,19 +15,19 @@ const UserContext = ({ children }) => {
       setUserData(null);
     }
   }
-  const deleteHistory=async(index)=>{
+  const deleteHistory = async (index) => {
     try {
       const result = await axios.post(`${serverUrl}/user/delete-history`, { index }, { withCredentials: true });
       console.log("History deleted:", result.data);
       setUserData(result.data);
     }
-    catch(err){
-console.log(err)
+    catch (err) {
+      console.log(err)
     }
   }
   const askAssistant = useCallback(async (command, preferredModel) => {
-    try{
-      const result = await axios.post(`${serverUrl}/user/asktoassistant`,{command, preferredModel},{ withCredentials: true }); 
+    try {
+      const result = await axios.post(`${serverUrl}/user/asktoassistant`, { command, preferredModel }, { withCredentials: true });
       console.log("Assistant Response:", result.data);
       return result.data; // Ensure we return the data payload
     }
@@ -37,7 +37,7 @@ console.log(err)
       return { success: false, message: errorMsg };
     }
   }, [serverUrl]);
-  
+
   useEffect(() => {
     handleCurrentUser();
 
