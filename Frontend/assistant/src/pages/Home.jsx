@@ -88,7 +88,7 @@ const Home = () => {
             toast.error("An error occurred during verification. Please contact support.");
           } finally {
             setIsPaying(false);
-          }
+          }33
         },
         modal: { ondismiss: () => setIsPaying(false) },
         theme: { color: "#3b82f6" }
@@ -104,7 +104,7 @@ const Home = () => {
   useEffect(() => {
     if (userData && !userData.user.isPremium) {
       // Show button if not premium and (history limit of 10 reached OR an AI error occurred)
-      if (userData.user.history.length >= 10 || aiErrorOccurred) {
+      if (userData.user.history.length >= 5 || aiErrorOccurred) {
         setShowPayButton(true);
       } else {
         setShowPayButton(false);

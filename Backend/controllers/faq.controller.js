@@ -88,66 +88,33 @@ export const deleteFAQ = async (req, res) => {
     }
 };
 
-const STOP_WORDS = new Set(['what', 'who', 'is', 'are', 'the', 'how', 'where', 'when', 'you', 'your', 'me', 'tell', 'about', 'can', 'please', 'was', 'were', 'which', 'from', 'this', 'that', 'with', 'for', 'and', 'my', 'do', 'does']);
 export const searchFAQ = async (query) => {
     try {
-        const queryLower = query.toLowerCase().trim();
-        const allWords = queryLower.split(/\s+/).filter(w => w.length > 1);
-        
-        // Filter out stop words to find the "meaningful" part of the query
-        const searchWords = allWords.filter(w => !STOP_WORDS.has(w));
-        
-        // If the query only has stop words (e.g. "Who are you?"), use all words, otherwise use meaningful words
-        const effectiveWords = searchWords.length > 0 ? searchWords : allWords;
-        if (effectiveWords.length === 0) return null;
+        const q = query.toLowerCase().trim();
 
-        // Escape special characters and use word boundaries to avoid partial matches (like 'is' in 'mission')
-        const escapedWords = effectiveWords.map(w => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-        const searchRegex = new RegExp(`\\b(${escapedWords.join('|')})\\b`, 'i');
-
-        // Find potential matches
-        const matches = await FAQ.find({
+        // 1. Check for Exact Match in Question or Alternate Questions
+        // This ensures we find the specific answer if the user asks exactly what is stored.
+        const exactMatch = await FAQ.findOne({
             $or: [
-                { keywords: { $regex: searchRegex } },
-                { question: { $regex: searchRegex } },
-                { alternateQuestions: { $regex: searchRegex } },
-                { category: { $regex: searchRegex } }
+                { question: { $regex: new RegExp(`^${q}$`, 'i') } },
+                { alternateQuestions: { $regex: new RegExp(`^${q}$`, 'i') } }
             ]
         });
+        if (exactMatch) return exactMatch;
 
-        if (!matches || matches.length === 0) return null;
-
-        // Scoring logic to find the best match
-        const scoredMatches = matches.map(faq => {
-            let score = 0;
-            const faqQuestion = faq.question.toLowerCase();
-            const faqKeywords = faq.keywords.map(k => k.toLowerCase());
-            
-            // Higher score for exact question match or strong inclusion
-            if (faqQuestion.includes(queryLower) || queryLower.includes(faqQuestion)) score += 10;
-            
-            // Score based on how many query words match keywords or the question
-            allWords.forEach(word => {
-                const isStopWord = STOP_WORDS.has(word);
-                const wordRegex = new RegExp(`\\b${word}\\b`, 'i');
-                
-                // Stop words give much lower scores to prevent false positives
-                if (faqKeywords.some(kw => wordRegex.test(kw))) score += isStopWord ? 1 : 5;
-                if (wordRegex.test(faqQuestion)) score += isStopWord ? 1 : 3;
-                if (faq.alternateQuestions.some(aq => wordRegex.test(aq))) score += isStopWord ? 1 : 3;
-                if (faq.category.toLowerCase() === word) score += 2;
-            });
-
-            return { faq, score };
+        // 2. Check for Exact Keyword Match
+        // We split the user's input into words and see if any word matches your "keywords" array exactly.
+        const words = q.split(/\s+/);
+        const keywordMatch = await FAQ.findOne({
+            $or: [
+                { keywords: q },            // Match full query as a keyword
+                { keywords: { $in: words } } // Match any single word from query as a keyword
+            ]
         });
+        if (keywordMatch) return keywordMatch;
 
-        // Sort by score descending and return the best one
-        scoredMatches.sort((a, b) => b.score - a.score);
-
-        // Thresholding: Increased to 7 to ensure at least one meaningful word matches
-        const MIN_SCORE_THRESHOLD = 7;
-        const bestMatch = scoredMatches[0];
-        return bestMatch && bestMatch.score >= MIN_SCORE_THRESHOLD ? bestMatch.faq : null;
+        // If no strict match is found, return null to let the AI (Gemini) handle it.
+        return null;
     } catch (error) {
         console.error("FAQ search error:", error);
         return null;

@@ -357,7 +357,6 @@ const seedFAQs = async () => {
                 "keywords": ["SDITS address", "address", " sdits located"],
                 "alternateQuestions": ["What is the address of the college?", "Where is SDITS located?", "SDITS kaha par located hai"]
             },
-
             {
                 "question": "Who is the HOD of Computer Science Engineering (CSE)?",
                 "answer": "The Head of the Computer Science Engineering department is Ankit Bakshi.",

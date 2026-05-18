@@ -73,7 +73,6 @@ export const logout = async (req, res) => {
         // UX Improvement: Resetting premium status and clearing history 
         // so the user gets a fresh start the next morning.
         await User.findByIdAndUpdate(req.userId, { 
-            isPremium: false,
             history: [] // Clear the 50 questions for a fresh start the next day
         });
     }
