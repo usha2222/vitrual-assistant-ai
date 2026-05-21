@@ -18,7 +18,7 @@ const user=await User.create({
     name,
     email,
     password:hashedPassword,
-    isPremium: false }); // रजिस्ट्रेशन के समय इसे साफ तौर पर लिखें
+    isPremium: false }); 
     const token=await getToken(user._id);
     res.cookie('token', token, {
         httpOnly: true,

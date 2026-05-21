@@ -78,16 +78,16 @@ export default function AdminPanel() {
         setLoading(true);
         try {
             // Combine alternate questions
-            const alternateQuestions = [formData.alt1, formData.alt2, formData.alt3]
-                .filter(q => q.trim() !== "")
-                .join('|');
+            const alternateQuestionsArray = [formData.alt1, formData.alt2, formData.alt3]
+                .filter(q => q.trim() !== "");
+
 
             const payload = {
                 category: formData.category.toLowerCase(),
                 question: formData.question,
                 answer: formData.answer,
                 keywords: formData.keywords,
-                alternateQuestions: alternateQuestions
+                alternateQuestions: alternateQuestionsArray
             };
 
             let res;
@@ -168,14 +168,14 @@ export default function AdminPanel() {
     };
 
     return (
-        <div className="min-h-screen text-white p-8 font-sans flex items-center justify-center bg-cover " style={{ backgroundImage: `url(${purplebg})` }}>
+        <div className="min-h-screen text-white p-8 font-sans flex items-center justify-center bg-cover  " style={{ backgroundImage: `url(${purplebg})` }}>
             <div className="w-full max-w-7xl grid grid-cols-1 md:grid-cols-12 gap-5 relative">
                 
                 {/* Header Icons (Absolute positioned in pre-made UI) */}
                 <div className="absolute top-0 right-6 flex items-center gap-6 text-gray-400 z-20">
                     <button 
                         onClick={handleLogout}
-                        className="mt-2 flex items-center justify-center gap-1 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl py-2 px-5 text-sm font-bold text-white hover:bg-white/10 hover:text-white transition w-max"
+                        className="mt-2 flex items-center justify-center gap-1 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl py-2 px-5 text-sm font-bold text-white hover:bg-white/10 hover:text-white transition w-max cursor-pointer"
                     >
                         <span>LOGOUT</span>
                         <LogOut size={16} />
@@ -190,7 +190,7 @@ export default function AdminPanel() {
                         <div className="absolute inset-0 bg-gradient-to-b from-cyan-500/10 to-transparent opacity-50"></div>
                         <div className="w-20 h-20 rounded-full border-2 border-cyan-400 p-1 mb-3 relative z-10">
                             <img
-                                src={`https://ui-avatars.com/api/?name=${adminData.username}&background=0D8ABC&color=fff`}
+                                src="https://tse3.mm.bing.net/th/id/OIP.dCpgPQ0i-xX2gZ-yonm54gHaHa?pid=Api&P=0&h=180"
                                 alt="Admin"
                                 className="w-full h-full object-cover rounded-full"
                             />
@@ -208,13 +208,13 @@ export default function AdminPanel() {
                     <div className="flex flex-col gap-4 mt-6 flex-grow justify-center">
                         {/* Total Questions */}
                         <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-5 shadow-lg animate-pulse-slow">
-                            <p className="text-xs font-bold tracking-wider text-gray-400 uppercase">Total Questions Added:</p>
+                            <p className="text-xs font-bold tracking-wider text-gray-300 uppercase">Total Questions Added:</p>
                             <p className="text-4xl font-extrabold mt-1 text-white">{recentFaqs.length}</p>
                         </div>
 
                         {/* History Questions */}
                         <div className="bg-white/9 backdrop-blur-md border border-white/10 rounded-2xl p-5 shadow-lg flex-grow overflow-hidden flex flex-col">
-                            <p className="text-xs font-bold tracking-wider text-gray-400 uppercase mb-3">Recently Added Questions:</p>
+                            <p className="text-xs font-bold tracking-wider text-gray-300 uppercase mb-3">Recently Added Questions:</p>
                             <div className="space-y-3 overflow-y-scroll pr-2 max-h-[300px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ">
                                 {recentFaqs.length > 0 ? recentFaqs.slice(0, 100).map((f, i) => (
                                     <div key={f._id} className="group text-sm text-gray-300 border-b border-white/5 pb-2 flex items-center justify-between hover:text-cyan-400 transition">
@@ -242,14 +242,14 @@ export default function AdminPanel() {
                         <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
                             <div className="flex justify-between items-center mb-6">
                                 <h3 className="text-xl font-semibold flex items-center gap-2"><UserCircle size={24} className="text-cyan-400"/> Edit Admin Profile</h3>
-                                <button onClick={() => setIsEditingProfile(false)} className="p-2 mt-6 hover:bg-white/10 rounded-full transition text-gray-800 hover:text-white">
-                                    <X size={20} />
+                                <button onClick={() => setIsEditingProfile(false)} className="p-1.5 mt-6 border border-gray-600 hover:bg-white/10 rounded-full transition text-gray-200 hover:text-white">
+                                    <X size={25} />
                                 </button>
                             </div>
                             
                             <form className="space-y-5" onSubmit={handleUpdateProfile}>
                                 <div>
-                                    <label className="block text-xs font-medium text-gray-400 mb-2 uppercase tracking-wider">Username</label>
+                                    <label className="block text-xs font-medium text-gray-200 mb-2 uppercase tracking-wider">Username</label>
                                     <input
                                         type="text"
                                         value={profileFormData.username}
@@ -260,7 +260,7 @@ export default function AdminPanel() {
                                 </div>
                                 
                                 <div>
-                                    <label className="block text-xs font-medium text-gray-400 mb-2 uppercase tracking-wider">Email Address</label>
+                                    <label className="block text-xs font-medium text-gray-200 mb-2 uppercase tracking-wider">Email Address</label>
                                     <input
                                         type="email"
                                         value={profileFormData.email}
@@ -271,7 +271,7 @@ export default function AdminPanel() {
                                 </div>
                                 
                                 <div>
-                                    <label className="block text-xs font-medium text-gray-400 mb-2 uppercase tracking-wider">New Password (leave blank to keep current)</label>
+                                    <label className="block text-xs font-medium text-gray-200 mb-2 uppercase tracking-wider">New Password (leave blank to keep current)</label>
                                     <input
                                         type="password"
                                         value={profileFormData.password}
@@ -311,7 +311,7 @@ export default function AdminPanel() {
                                             answer: '',
                                             keywords: ''
                                         })}
-                                        className="text-xs bg-red-500/20 text-gray-100 px-5 py-1.5 mt-5 rounded-lg hover:bg-red-500/30 transition cursor-pointer"
+                                        className="text-xs bg-red-500/40 text-white font-semibold px-5 py-2 mt-5 rounded-lg hover:bg-red-300/20 transition cursor-pointer"
                                     >
                                         Cancel Edit
                                     </button>
@@ -319,7 +319,7 @@ export default function AdminPanel() {
                             </div>
 
                             {/* Category */}
-                            <label className="block text-xs font-medium text-gray-700 mb-2">Category</label>
+                            <label className="block text-xs font-medium text-gray-200 mb-2">Category</label>
                             <div className="relative">
                                 <select 
                                     value={formData.category}
@@ -343,7 +343,7 @@ export default function AdminPanel() {
 
                         {/* Questions Fields */}
                         <div className="space-y-3">
-                            <label className="block text-xs font-medium text-gray-400">Questions:</label>
+                            <label className="block text-xs font-medium text-gray-200">Questions:</label>
 
                             <div className="flex items-center gap-2">
                                 <input
@@ -386,7 +386,7 @@ export default function AdminPanel() {
 
                         {/* Answer Text */}
                         <div>
-                            <label className="block text-xs font-medium text-gray-400 mb-2">Answer Text:</label>
+                            <label className="block text-xs font-medium text-gray-200 mb-2">Answer Text:</label>
                             <textarea
                                 rows="4"
                                 value={formData.answer}
@@ -397,7 +397,7 @@ export default function AdminPanel() {
                         </div>
                         {/* Keywords */}
                         <div>
-                            <label className="block text-xs font-medium text-gray-400 mb-2">Keywords:</label>
+                            <label className="block text-xs font-medium text-gray-200 mb-2">Keywords:</label>
                             <textarea
                                 rows="2"
                                 value={formData.keywords}

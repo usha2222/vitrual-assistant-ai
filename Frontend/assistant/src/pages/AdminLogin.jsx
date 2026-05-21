@@ -7,6 +7,8 @@ import axios from 'axios';
 import { userDataContext } from '../context/UserContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { BackpackIcon, MoveLeft } from 'lucide-react';
+import { MdBackHand } from 'react-icons/md';
 const AdminLogin = () => {
 
     const [showPassword, setShowPassword] = useState(false);
@@ -60,6 +62,9 @@ const AdminLogin = () => {
 
                 <button type="submit" className='w-full  h-[50px] cursor-pointer text-white font-semibold  rounded-full text-[19px] outline-none border border-gray-200 bg-transparent' disabled={loading}>
                     {loading ? 'Logging in...' : 'Login'}
+                </button>
+                <button type="button" className='border border-gray-300 rounded-full px-4 py-1.5 text-white cursor-pointer flex justify-center items-center gap-1.5' onClick={() => navigate('/')}>
+                  <MoveLeft size={14}/>  Back to home
                 </button>
             </form>
         </div>

@@ -114,19 +114,20 @@ const seedFAQs = async () => {
                 "keywords": ["fees counter", "accountant counter", "fees", "payment counter"],
                 "alternateQuestions": ["Where to pay fees?", "Accountant office location."]
             },
-            {
-                question: "Who is the principal of SDITS?",
-                answer: "The principal of Shree Dadaji Institute of Technology and Science (S.D.I.T.S.) is Dr. Sapna Arzare Mam",
-                category: "general",
-                keywords: ["principal", "principal name", "sapna arzare", "dr sapna", "name"],
-                alternateQuestions: ["Who is the principal of the college?", "What is the principal's name?"]
-            },
+          
             {
                 "question": "Where is the principal's office in the college?",
                 "answer": "Go straight and turn left. The Principal's office is located there at the room number 102 .",
                 "category": "general",
-                "keywords": ["principal office", "location", "cabin", "room"],
+                "keywords": ["principal office", " principal office location", " principal cabin"],
                 "alternateQuestions": ["Principal's cabin location.", "How to find principal office?"]
+            },
+              {
+                question: "Who is the principal of SDITS?",
+                answer: "The principal of Shree Dadaji Institute of Technology and Science (S.D.I.T.S.) is Dr. Sapna Arzare Mam",
+                category: "general",
+                keywords: ["principal", "principal name", "sapna arzare", "dr sapna"],
+                alternateQuestions: ["Who is the principal of the college?", "What is the principal's name?"]
             },
             {
                 question: "Who is the Dean Academic of SDITS?",
@@ -137,9 +138,9 @@ const seedFAQs = async () => {
             },
             {
                 "question": "Where is the Dean Academic office in the college?",
-                "answer": "Go straight, and it is on the right sid  e of the stairs in front of you . The Dean Academic office is located at room number 108.",
+                "answer": "Go straight, and it is on the right side of the stairs in front of you . The Dean Academic office is located at room number 108.",
                 "category": "general",
-                "keywords": ["dean office", "academic office"],
+                "keywords": ["dean office", "academic office","dean academic office location"],
                 "alternateQuestions": ["Dean's office location.", "How to find academic dean office?"]
             },
 
@@ -361,7 +362,7 @@ const seedFAQs = async () => {
                 "question": "Who is the HOD of Computer Science Engineering (CSE)?",
                 "answer": "The Head of the Computer Science Engineering department is Ankit Bakshi.",
                 "category": "hod",
-                "keywords": ["hod", "head of cse", " hod of computer science engineering", "head of department"],
+                "keywords": ["hod", "head of cse", " hod of computer science ", "head of department of cse"],
                 "alternateQuestions": [
                     "Who is the head of CSE department?",
                     "CSE ke department HOD kaun hai?",
@@ -374,7 +375,7 @@ const seedFAQs = async () => {
                 "question": "Who is the HOD of Data Science (DS)?",
                 "answer": "The Head of the Data Science department is Mr. Ankit Bakshi.",
                 "category": "hod",
-                "keywords": ["hod","head of ds", "hod data science",  "head of department"],
+                "keywords": ["hod","head of ds", "hod data science",  "head of department of ds"],
                 "alternateQuestions": [
                     "Who is the head of DS department?",
                     "Data Science HOD kaun hai?",
@@ -387,7 +388,7 @@ const seedFAQs = async () => {
                 "question": "Who is the HOD of Mechanical Engineering (ME)?",
                 "answer": "The Head of the Mechanical Engineering department is Mr. L.P. Ladhe.",
                 "category": "hod",
-                "keywords": ["hod","head of me","hod of mechanical",  "head of department"],
+                "keywords": ["hod","head of me","hod of mechanical",  "head of department of me"],
                 "alternateQuestions": [
                     "Who is the head of Mechanical department?",
                     "Mechanical HOD kaun hai?",
@@ -400,7 +401,7 @@ const seedFAQs = async () => {
                 "question": "Who is the HOD of Civil Engineering (CE)?",
                 "answer": "The Head of the Civil Engineering department is Mr. Ashish Paliwal",
                 "category": "hod",
-                "keywords": ["hod","hod of ce","head of civil ", "head of department"],
+                "keywords": ["hod","hod of ce","head of civil ", "head of department of ce"],
                 "alternateQuestions": [
                     "Who is the head of Civil department?",
                     "Civil HOD kaun hai?",
@@ -413,7 +414,7 @@ const seedFAQs = async () => {
                 "question": "Who is the HOD of Electrical Engineering (EE)?",
                 "answer": "The Head of the Electrical Engineering department is Mr. Ramakant Sukla",
                 "category": "hod",
-                "keywords": ["hod","head of electrical", "hod of ee" , "head of department"],
+                "keywords": ["hod","head of electrical", "hod of ee" , "head of department of ee"],
                 "alternateQuestions": [
                     "Who is the head of Electrical department?",
                     "Electrical ke HOD kaun hai?",
@@ -427,7 +428,7 @@ const seedFAQs = async () => {
                 "question": "Who is the HOD of BBA?",
                 "answer": "The Head of the BBA department  is  Mrs. Ritika Desai Tiwari.",
                 "category": "hod",
-                "keywords": ["hod","head of bba", "hod of bba","head of department"],
+                "keywords": ["hod","head of bba", "hod of bba","head of department of bba"],
                 "alternateQuestions": [
                     "BBA department ka head kaun hai?",
                     "Who is the head of BBA?",
@@ -440,7 +441,7 @@ const seedFAQs = async () => {
                 "question": "Who is the HOD of MBA?",
                 "answer": "The Head of the MBA department is  Mrs. Ritika Desai Tiwari.",
                 "category": "hod",
-                "keywords": ["hod", "head of mba","hod of mba", "head of department"],
+                "keywords": ["hod", "head of mba","hod of mba", "head of department of mba"],
                 "alternateQuestions": [
                     "MBA department ka head kaun hai?",
                     "Who is the head of MBA?",
@@ -453,7 +454,7 @@ const seedFAQs = async () => {
                 "question": "Who is the HOD of BCA?",
                 "answer": "The Head of the BCA is department Mrs. Rachita Vyas Dongre.",
                 "category": "hod",
-                "keywords": ["hod", "hod of bca", "head of bca", "head of department"],
+                "keywords": ["hod", "hod of bca", "head of bca", "head of department of bca"],
                 "alternateQuestions": [
                     "BCA department ka head kaun hai?",
                     "Who is the head of BCA?",
@@ -467,7 +468,7 @@ const seedFAQs = async () => {
                 "question": "Who is the HOD of MCA?",
                 "answer": "The Head of the MCA department is Mrs. Rachita Vyas Dongre.",
                 "category": "hod",
-                "keywords": ["hod", "head of mca", "hod of mca", "head of department"],
+                "keywords": ["hod", "head of mca", "hod of mca", "head of department of mca"],
                 "alternateQuestions": [
                     "MCA department ka head kaun hai?",
                     "Who is the head of MCA?",
@@ -480,7 +481,7 @@ const seedFAQs = async () => {
                 "question": "Who is the HOD of M Tech?",
                 "answer": "The Head of the M Tech department is Mr. L.P. Ladhe.",
                 "category": "hod",
-                "keywords": ["hod", "head of mtech", "hod of m tech",  "head of department"],
+                "keywords": ["hod", "head of mtech", "hod of m tech",  "head of department of mtech"],
                 "alternateQuestions": [
                     "M Tech ke head kaun hai",
                     "M Tech department ke head kon hai",
@@ -618,11 +619,13 @@ const seedFAQs = async () => {
             },
             {
                 "question": "Where is the Placement and innovation cell ?",
-                "answer": " Go straight and walk beside the stairs at Room Number    .",
+                "answer": " Go straight and walk beside the stairs at Room Number 107 .",
                 "category": "department_location",
-                "keywords": ["Placement and innovation cell", "placement cell  location"],
+                "keywords": ["Placement and innovation cell", "placement cell  location","traing and placement cell location",'tpo location' ,'tpo address'],
                 "alternateQuestions": [
                     "Placement and innovation cell kaha hai?",
+                    "Where is the placement cell in the college?",
+                    "Where is tpo office in the college?",
                     "Address is Placement and innovation cell?",
                     "Training and palcement cell kaha hai?",
                     "How to reach Placement and innovation cell?"
@@ -630,7 +633,7 @@ const seedFAQs = async () => {
             },
             {
                 "question": "Where is the computer lab?",
-                "answer": " Go straight through stairs and turn right at Room Number 201    .",
+                "answer": " Go straight through stairs and turn right at Room Number 201 .",
                 "category": "department_location",
                 "keywords": ["computer lab", "computer lab location"],
                 "alternateQuestions": [

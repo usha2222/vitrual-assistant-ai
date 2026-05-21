@@ -137,8 +137,11 @@ export const askToAssistant = async (req, res) => {
 
                 // Gemini Question Limit Check for Free Users
                 // App's Internal Gemini Question Limit Check for Free Users
-                if (!user.isPremium && user.history.length >= 5) {
-                    return res.status(403).json({ success: false, message: "You have reached your daily limit of 10 free questions. Please upgrade to Premium to switch to backup engines." });
+                if (!user.isPremium && user.history.length >= 15) {
+                    return res.status(403).json({ 
+                        success: false, 
+                        message: "Your free credits have been exhausted. Please purchase more credits to continue using S.D.I.T.S. AI Assistant." 
+                    });
                 }
                 aiResponseResult = await getAssistantResponse(fullPrompt, finalPreferredModel);
                 break; // If successful, break the loop
@@ -148,16 +151,10 @@ export const askToAssistant = async (req, res) => {
 
                 if (!user.isPremium) {
                     // Non-premium user: AI failed, tell them to upgrade
-                    return res.status(403).json({ success: false, message: `AI service (${finalPreferredModel}) is currently unavailable. Please upgrade to Premium to try other engines or contact support.` });
-                    // Non-premium user: AI failed.
-                    // If the internal limit is not yet reached, treat it as a temporary service issue,
-                    // not a prompt to upgrade.
-                    if (user.history.length < 10) {
-                        return res.status(500).json({ success: false, message: `AI service (${finalPreferredModel}) is currently unavailable. Please try again later.` });
-                    } else {
-                        // If internal limit is reached, then prompt for upgrade.
-                        return res.status(403).json({ success: false, message: `You have reached your daily limit of 10 free questions. AI service (${finalPreferredModel}) is also unavailable. Please upgrade to Premium.` });
-                    }
+                    return res.status(403).json({ 
+                        success: false, 
+                        message: "Your free credits have been exhausted. Please purchase more credits to continue using S.D.I.T.S. AI Assistant." 
+                    });
                 }
 
                 // Premium user: try to switch models

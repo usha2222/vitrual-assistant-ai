@@ -51,7 +51,7 @@ const App = () => {
        theme="dark"
      />
     <Routes>
-      <Route path='/' element={ // Removed customization check, always go to Home if logged in
+      <Route path='/' element={ 
         !userData ? <Navigate to="/login" /> : <Home />
       } />
       <Route path='/login' element={ !userData ? <Login /> : <Navigate to='/' /> } />

@@ -90,33 +90,38 @@ export const deleteFAQ = async (req, res) => {
 
 export const searchFAQ = async (query) => {
     try {
+        if (!query) return null;
         const q = query.toLowerCase().trim();
 
-        // 1. Check for Exact Match in Question or Alternate Questions
-        // This ensures we find the specific answer if the user asks exactly what is stored.
-        const exactMatch = await FAQ.findOne({
-            $or: [
-                { question: { $regex: new RegExp(`^${q}$`, 'i') } },
-                { alternateQuestions: { $regex: new RegExp(`^${q}$`, 'i') } }
-            ]
-        });
-        if (exactMatch) return exactMatch;
+        // Fetch all FAQs for smart comparison
+        const allFAQs = await FAQ.find();
+        
+        let bestMatch = null;
+        let maxMatchLength = 0;
 
-        // 2. Check for Exact Keyword Match
-        // We split the user's input into words and see if any word matches your "keywords" array exactly.
-        const words = q.split(/\s+/);
-        const keywordMatch = await FAQ.findOne({
-            $or: [
-                { keywords: q },            // Match full query as a keyword
-                { keywords: { $in: words } } // Match any single word from query as a keyword
-            ]
-        });
-        if (keywordMatch) return keywordMatch;
+        for (const faq of allFAQs) {
+            // Create a list of all potential match targets for this FAQ
+            const targets = [
+                faq.question.toLowerCase(),
+                ...faq.alternateQuestions.map(alt => alt.toLowerCase()),
+                ...faq.keywords.map(kw => kw.toLowerCase().trim())
+            ];
 
-        // If no strict match is found, return null to let the AI (Gemini) handle it.
-        return null;
+            for (const target of targets) {
+                // If the user's query contains this specific phrase/target
+                if (q.includes(target)) {
+                    // Priority goes to the longest (most specific) string match
+                    if (target.length > maxMatchLength) {
+                        maxMatchLength = target.length;
+                        bestMatch = faq;
+                    }
+                }
+            }
+        }
+
+        return bestMatch;
     } catch (error) {
-        console.error("FAQ search error:", error);
+        console.error("FAQ Search Error:", error);
         return null;
     }
 };
