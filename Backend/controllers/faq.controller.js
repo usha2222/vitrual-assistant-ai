@@ -19,8 +19,12 @@ export const addFAQ = async (req, res) => {
             question,
             answer,
             category: normalizeCategory(category),
-            keywords: keywords ? keywords.split(',').map(k => k.trim()) : [],
-            alternateQuestions: alternateQuestions ? alternateQuestions.split('|').map(q => q.trim()) : [],
+            keywords: typeof keywords === 'string'
+                ? keywords.split(',').map(k => k.trim()).filter(k => k !== '')
+                : (Array.isArray(keywords) ? keywords : []),
+            alternateQuestions: Array.isArray(alternateQuestions)
+                ? alternateQuestions
+                : (typeof alternateQuestions === 'string' ? alternateQuestions.split('|').map(q => q.trim()).filter(q => q !== '') : []),
         });
 
         await newFAQ.save();
@@ -54,8 +58,12 @@ export const updateFAQ = async (req, res) => {
                 question,
                 answer,
                 category: normalizeCategory(category),
-                keywords: keywords ? keywords.split(',').map(k => k.trim()) : [],
-                alternateQuestions: alternateQuestions ? alternateQuestions.split('|').map(q => q.trim()) : [],
+                keywords: typeof keywords === 'string'
+                    ? keywords.split(',').map(k => k.trim()).filter(k => k !== '')
+                    : (Array.isArray(keywords) ? keywords : []),
+                alternateQuestions: Array.isArray(alternateQuestions)
+                    ? alternateQuestions
+                    : (typeof alternateQuestions === 'string' ? alternateQuestions.split('|').map(q => q.trim()).filter(q => q !== '') : []),
             },
             { new: true, runValidators: true } // Return the updated document and run schema validators
         );

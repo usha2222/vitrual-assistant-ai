@@ -445,7 +445,7 @@ const Home = () => {
             style={{ fontFamily: '"Poppins", sans-serif' }}>
           Smart College <span className='text-cyan-400 lg:text-5xl font-bold'>AI Assistant</span>
         </h1>
-        <p className='text-gray-300 font-normal mt-2  text-[13px] md:text-[14px] '>Your voice. Your campus. An AI assistant that's always listening and always ready.</p>
+        <p className='text-gray-300 font-normal mt-2  text-[11px] lg:text-[14px] '>Your voice. Your campus. One smart AI assistant for everything you need — instant answers, intelligent guidance, and seamless voice-powered support across your campus.</p>
       </div>
       <div className='relative flex flex-col md:flex-row justify-center items-center mt-15 w-full max-w-7xl gap-6 md:gap-16 lg:gap-32 px-4'>
         {/* Left Instruction Div */}
